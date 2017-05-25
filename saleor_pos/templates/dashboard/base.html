@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+{% load staticfiles i18n %}
+{% load render_bundle from webpack_loader %}
+{% load version %}
+
+<html lang="{{ LANGUAGE_CODE }}" class="no-js">
+  <head>
+    <title>
+      {% block title %}
+        {% trans "Dashboard - Saleor" context "Dashboard default page title" %}
+      {% endblock %}
+    </title>
+    {% block meta %}
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    {% endblock meta %}
+
+    {% include 'favicon.html' %}
+    {% render_bundle 'vendor' 'css' %}
+    {% render_bundle 'dashboard' 'css' %}
+    <link rel="stylesheet" type="text/css" href="{% static "versatileimagefield/css/versatileimagefield.css" %}">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+
+    {% block custom_css %}{% endblock %}
+  </head>
+
+  <body class="{% block body_class %}body-home{% endblock %}">
+    <header>
+      <nav class="top-nav" id="top-nav">
+        <div class="nav-wrapper">
+          <div class="right">
+            <ul id="user-action" class="dropdown-content">
+              <li class="user-name">
+                {{ request.user }}
+              </li>
+              <li class="divider"></li>
+              <li>
+                <a href="/" target="_blank" class="waves-effect waves-teal">
+                  {% trans "Visit storefront" context "Dashboard top navigation action" %}
+                </a>
+                <a href="{% url "dashboard:styleguide" %}" target="_blank" class="waves-effect waves-teal">
+                  {% trans "Style guide" context "Dashboard top navigation action" %}
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'account_logout' %}" class="waves-effect waves-teal">
+                  {% trans "Log out" context "Dashboard top navigation action" %}
+                </a>
+              </li>
+            </ul>
+            <a class="dropdown-button" data-constrainwidth="false" href="#" data-activates="user-action">
+              <svg data-src="{% static "/dashboard/images/account_circle.svg" %}" width="24" height="24" fill="#fff" />
+            </a>
+            {% if SEARCH_IS_ENABLED %}
+              <a href="{% url "dashboard:search" %}" class="hide-on-med-and-up dropdown-button">
+                <svg data-src="{% static "dashboard/images/search.svg" %}" width="24" height="24" fill="#fff" />
+              </a>
+            {% endif %}
+          </div>
+          <ul class="left">
+            <li>
+              <a href="#" id="toggle-menu">
+                <svg data-src="{% static "dashboard/images/mobile_menu.svg" %}" width="24" height="24" />
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'dashboard:index' %}" class="logo">
+                <svg data-src="{% static "dashboard/images/saleor_logo.svg" %}" height="38px" width="176px" />
+              </a>
+            </li>
+            <li class="search">
+              {% if SEARCH_IS_ENABLED %}
+                <form method="get" action="{% url "dashboard:search" %}" class="hide-on-small-only">
+                  <div class="input-field">
+                    <input id="search" type="search" placeholder="{% trans "Search" context "Dashboard search" %}" name="q" value="{% if query %}{{ query }}{% endif %}">
+                    <label>
+                      <svg data-src="{% static "dashboard/images/search.svg" %}" width="24" height="24" fill="#fff" />
+                    </label>
+                  </div>
+                </form>
+              {% endif %}
+            </li>
+          </ul>
+          <ul class="side-nav" style="border-right:1px solid #d8d8d8;padding-right: 0px;padding-left: 0px;">
+            <li class="nav-home">
+              <a href="{% url 'dashboard:index' %}">
+              <i class="fa fa-home" style="font-size:20px;"></i>
+                {% trans "Home" context "Dashboard homepage" %}
+              </a>
+            </li>
+            <li class="side-nav-section" id="first">
+              <ul class="collapsible" data-collapsible="accordion">
+              <!-- sales management -->
+              <li class="side-nav-section">
+                  <a class="{% block menu_sales_class %}{% endblock %} collapsible-header"><i class="fa fa-at"></i>Sale Management</a>
+                  <a href="{% url 'dashboard:sale-list' %}" class="collapsible-body">
+                    <span>{% trans "Sales" context "Dashboard sales (discounts) list" %}</span>
+                  </a>
+                  <a href="{% url 'dashboard:orders' %}" class="collapsible-body">
+                    <span>{% trans "Orders" context "Dashboard orders list" %}</span>
+                  </a>
+                  <a href="{% url 'dashboard:customers' %}" class="collapsible-body">
+                    <span>{% trans "Customers" context "Dashboard customers list" %}</span>
+                  </a>
+                  <a href="{% url 'dashboard:voucher-list' %}" class="collapsible-body">
+                    <span>{% trans "Vouchers" context "Dashboard vouchers list" %}</span>
+                  </a>
+                </li>
+                <!-- Inventory Management -->
+                <li class="side-nav-section">
+                  <a class="{% block menu_products_class %}{% endblock %} collapsible-header"><i class="fa fa-shopping-basket"></i>Inventory</a>
+                  <a href="{% url 'dashboard:product-list' %}" class="collapsible-body">
+                    <span>{% trans "Products" context "Dashboard products list" %}</span>
+                  </a>
+                  <a  href="{% url 'dashboard:category-list' %}" class="collapsible-body">
+                    <span>{% trans "Categories" context "Dashboard categories list" %}</span>
+                  </a>
+                  <a  href="{% url 'dashboard:product-class-list' %}" class="collapsible-body">
+                    <span>{% trans "Product types" context "Dashboard product types list" %}</span>
+                  </a>
+                  <a href="{% url 'dashboard:product-attributes' %}" class="collapsible-body ">
+                     <span>{% trans "Attributes" context "Dashboard attributes list" %}</span>
+                  </a>
+                  <a href="{% url 'dashboard:product-stock-location-list' %}" class="collapsible-body ">
+                     <span>{% trans "Stock locations" context "Dashboard stock loactions list" %}</span>
+                  </a>
+                </li>
+                <!-- User Management -->
+                <li class="side-nav-section">
+                  <a class="collapsible-header"><i class="fa fa-user-circle"></i>User Management</a>
+                  <a class="collapsible-body"><span>user action one.</span></a>
+                  <a class="collapsible-body"><span>user action two.</span></a>
+                </li>
+                <!-- Messaging Management -->
+                <li class="side-nav-section">
+                  <a class="collapsible-header"><i class="fa fa-phone-square"></i>Messaging</a>
+                  <a class="collapsible-body"><span>messaging one</span></a>
+                  <a class="collapsible-body"><span>messaging two.</span></a>
+                </li>
+                <li class="side-nav-section">
+                  <a class="collapsible-header"><i class="fa fa-money"></i>Accounting</a>
+                  <a class="collapsible-body"><span>action one.</span></a>
+                  <a class="collapsible-body"><span>action two.</span></a>
+                </li>
+                <!-- Reports Management-->
+                <li class="side-nav-section">
+                  <a class="collapsible-header"><i class="fa fa-clipboard"></i>Reports</a>
+                  <a class="collapsible-body active"><span>action one.</span></a>
+                </li>
+                <!-- Settings Management-->
+                <li class="side-nav-section">
+                  <a class="{% block settings_class %}{% endblock %} collapsible-header"><i class="fa fa-cogs"></i>Settings</a>
+                  <a href="{% url 'dashboard:shipping-methods' %}" class="collapsible-body ">
+                     <span>{% trans "Shipping methods" context "Dashboard shipping methods list" %}</span>
+                  </a>
+                  <a href="{% url 'dashboard:site-index' %}" class="collapsible-body ">
+                     <span>{% trans "Site settings" context "Dashboard site settings" %}</span>
+                  </a>
+                </li>
+              </ul>
+            </li>
+            <li class="side-nav-section" id="version-indicator">
+                <p> Glo-POS </p>
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </header>
+    <div class="subheader top-nav">
+      <div class="nav-wrapper container">
+        {% block breadcrumbs %}
+          <ul class="breadcrumbs">
+            <li class="visible-s">
+              <a href="#">
+                {% trans "Home" context "Dashboard homepage" %}
+              </a>
+            </li>
+          </ul>
+        {% endblock %}
+        {% block header_extra %}{% endblock %}
+      </div>
+    </div>
+    <main class="main">
+      <div class="container">
+        {% block content %}{% endblock %}
+      </div>
+    </main>
+    <div id="base-modal" class="modal"></div>
+    <div id="base-modal-fixed" class="modal modal-fixed-footer"></div>
+
+    <!-- Core Scripts - Include with every page -->
+    <script type="text/javascript" src="{% url 'javascript-catalog' %}"></script>
+    {% render_bundle 'vendor' 'js' %}
+    {% render_bundle 'dashboard' 'js' %}
+    <script src="{% static "versatileimagefield/js/versatileimagefield.js" %}"></script>
+    {% include "dashboard/includes/_messages.html" %}
+
+    {% block custom_js %}{% endblock %}
+  </body>
+</html>
