@@ -24,3 +24,4 @@ Installation Process
 11. run django project as : - python manage.py runserver
 12. During first installation, the database products, sales, customers and orders table are empty. To simulate data in the app run
     the following command : - python manage.py populatedb
+13. To access the dashboard, create a user through the registration form of the site and grant him/her priviledges in the database like is staff and is super user.
