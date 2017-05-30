@@ -10,10 +10,18 @@ from django.utils.translation import pgettext_lazy
 
 from ...product.models import (AttributeChoiceValue, Product, ProductAttribute,
                                ProductClass, ProductImage, ProductVariant,
-                               Stock, StockLocation, VariantImage)
+                               Stock, StockLocation, VariantImage, ProductTax)
 from .widgets import ImagePreviewWidget
 from ...search import index as search_index
 
+class ProductTaxForm(forms.ModelForm):
+    class Meta:
+        model = ProductTax
+        exclude = []
+    def __init__(self, *args, **kwargs):        
+        super(ProductTaxForm, self).__init__(*args, **kwargs)     
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'
 
 class ProductClassSelectorForm(forms.Form):
     MAX_RADIO_SELECT_ITEMS = 5
@@ -22,6 +30,8 @@ class ProductClassSelectorForm(forms.Form):
         product_classes = kwargs.pop('product_classes', [])
         super(ProductClassSelectorForm, self).__init__(*args, **kwargs)
         choices = [(obj.pk, obj.name) for obj in product_classes]
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'
         if len(product_classes) > self.MAX_RADIO_SELECT_ITEMS:
             widget = forms.Select
         else:
@@ -39,6 +49,8 @@ class StockForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         product = kwargs.pop('product')
         super(StockForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'
         if not product.product_class.has_variants:
             initial = product.variants.first()
         else:
@@ -101,12 +113,17 @@ class ProductForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.product_attributes = []
         super(ProductForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'
         field = self.fields['name']
         field.widget.attrs['placeholder'] = pgettext_lazy(
             'Product form placeholder', 'Give your awesome product a name')
-        field = self.fields['categories']
+        field = self.fields['categories']        
         field.widget.attrs['data-placeholder'] = pgettext_lazy(
             'Product form placeholder', 'Search')
+        field.widget.attrs['class'] = 'multiselect'
+        field.widget.attrs['multiple'] = 'multiple'         
+
         product_class = self.instance.product_class
         self.product_attributes = product_class.product_attributes.all()
         self.product_attributes = self.product_attributes.prefetch_related(
@@ -114,14 +131,15 @@ class ProductForm(forms.ModelForm):
         self.prepare_fields_for_attributes()
 
     def prepare_fields_for_attributes(self):
-        for attribute in self.product_attributes:
-            field_defaults = {
+        for attribute in self.product_attributes:            
+            field_defaults = {               
                 'label': attribute.name,
                 'required': False,
                 'initial': self.instance.get_attribute(attribute.pk)}
             if attribute.has_values():
                 field = CachingModelChoiceField(
                     queryset=attribute.values.all(), **field_defaults)
+                field.widget.attrs['class'] = 'form-control'
             else:
                 field = forms.CharField(**field_defaults)
             self.fields[attribute.get_formfield_name()] = field

@@ -9,6 +9,7 @@ from .discount.urls import urlpatterns as discount_urls
 from .search.urls import urlpatterns as search_urls
 from .sites.urls import urlpatterns as site_urls
 from .shipping.urls import urlpatterns as shipping_urls
+from .users.urls import urlpatterns as users_urls
 
 
 urlpatterns = [
@@ -16,6 +17,7 @@ urlpatterns = [
     url(r'^categories/', include(category_urls)),
     url(r'^orders/', include(order_urls)),
     url(r'^products/', include(product_urls)),
+     url(r'^users/', include(users_urls)),
     url(r'^customers/', include(customer_urls)),
     url(r'^discounts/', include(discount_urls)),
     url(r'^search/', include(search_urls)),

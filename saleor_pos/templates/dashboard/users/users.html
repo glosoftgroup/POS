@@ -1,0 +1,94 @@
+
+{% extends "dashboard/base.html" %}
+{% load i18n %}
+{% load prices_i18n %}
+
+{% block title %}
+  users
+{% endblock %}
+
+{% block menu_user_class %}active{% endblock %}
+
+{% block content %}
+ <div class="row">
+  <div class="col s12">
+	<h2>Users</h2>
+      {#{% if users %}#} 
+      <!-- Header and footer fixed -->
+      <div class="panel panel-flat">
+        <div class="panel-heading">        
+          {#{% include "dashboard/includes/_pagination.html" with page_obj=products %}#}
+          <div class="heading-elements">
+            <ul class="icons-list">              
+              <li><a data-action="collapse"></a></li>       
+              <li><a data-action="close"></a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="table-responsive">
+
+        	<table class="table table-bordered datatable-header-footer">
+        		<caption style="margin-bottom: 10px;">
+        		  <a href="{% url 'dashboard:user-add' %}" class="btn btn-primary waves-effect waves-light">Add User</a>
+
+        		 </caption>
+                <thead style="border-top:1px solid #ddd;">
+                  <tr>
+                    <th>Id</th>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>User Role</th>
+                    <th class="text-center">Actions</th>
+                  </tr>
+                </thead>
+                <tfoot>
+                   <tr>
+                    <th>Id</th>
+                    <th>Image</th>
+                    <th>User Name</th>
+                    <th>Email</th>
+                    <th>User Role</th>
+                    <th class="text-center">Actions</th>
+                  </tr>
+                </tfoot>
+                <tbody>
+
+                  <tr>
+                    <td>#1</td>
+                    <!-- image -->
+                    <td><a href="#"><img src="https://dummyimage.com/300"
+                     alt="" class="circle teal" style="width: 40px;height: 40px;"></a></td>
+                     <!-- product name -->
+                    <td>admin</td>
+                    <!-- product category -->
+                    <td>admin@gmail.com
+                    </td>
+                    <!-- price -->
+                    <td> staff</td>
+                    <!-- actions -->
+                    <td class="text-center">
+                      <ul class="icons-list">
+                        <li><a href="#"><i class="icon-pencil7" data-popup="tooltip" tite='Edit product' data-placement="bottom" data-original-title="Edit me"></i></a></li>
+                        <li>
+                  <a href="#base-modal" data-href="#"
+                          class="modal-trigger-custom"><i class="icon-trash position-left" data-popup="tooltip" tite='Edit product' data-placement="bottom" data-original-title="Delete me"></i> 
+                           
+                          </a>  
+                        </li>
+                        <li>
+                          <a href="#"><i class="icon-eye position-left" data-popup="tooltip" tite='Edit product' data-placement="bottom" data-original-title="View me on site"></i>   </a>
+                        </li>
+                      </ul>
+                    </td>
+                  </tr>
+                  </tbody>
+           </table>
+        </div>
+      </div>
+   {#{% else %}#}
+     <!-- no users available -->
+   {#{% endif %}#}
+  </div>
+</div>
+{% endblock%}

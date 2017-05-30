@@ -32,13 +32,13 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-  <ul class="breadcrumbs breadcrumbs--history">
+  
     <li>
       <a href="{% url 'dashboard:product-stock-location-list' %}" class="breadcrumbs--ellipsed-item">
         {% trans "Stock location" context "Dashboard stock location" %}
       </a>
     </li>
-    <li class="back-mobile">
+    <li >
       <a href="{% url 'dashboard:sale-list' %}">
         <svg data-src="{% static "dashboard/images/arrow_left.svg" %}" fill="#fff" width="20px" height="20px" />
       </a>
@@ -52,11 +52,10 @@
         {% endif %}
       </span>
     </li>
-  </ul>
+
 {% endblock %}
 
 {% block menu_location_class %} active{% endblock %}
-{% block menu_products_class %}active{% endblock %}
 
 {% block content %}
   <div class="row">

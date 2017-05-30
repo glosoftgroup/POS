@@ -9,6 +9,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import pgettext_lazy
 from django_countries.fields import Country, CountryField
 from ..search import index
+from passlib.hash import pbkdf2_sha256
 
 
 class AddressManager(models.Manager):
@@ -108,6 +109,7 @@ class UserManager(BaseUserManager):
                                 is_superuser=True, **extra_fields)
 
 
+
 class User(PermissionsMixin, AbstractBaseUser, index.Indexed):
     email = models.EmailField(pgettext_lazy('User field', 'email'), unique=True)
     addresses = models.ManyToManyField(
@@ -147,3 +149,16 @@ class User(PermissionsMixin, AbstractBaseUser, index.Indexed):
 
     def get_short_name(self):
         return self.email
+
+class Staff(models.Model):
+    name = models.CharField(max_length=100, null=True, blank=True)
+    email = models.CharField(max_length=100, null=True, blank=True)
+    password = models.CharField(max_length=1000, null=True, blank=True)
+    nid = models.CharField(max_length=100, null=True,blank=True)
+    mobile = models.CharField(max_length=100, null=True, blank=True)
+    active = models.BooleanField(default=True)
+    image = models.FileField(upload_to='staff')
+
+    def verify_password(self, raw_password):
+        return pbkdf2_sha256.encrypt(raw_password, self.password)
+# group = models.OneToOneField(Group, on_delete=models.CASCADE)

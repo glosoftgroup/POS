@@ -16,7 +16,7 @@
 
 {% block body_class %}body-products{% endblock %}
 
-{% block menu_products_class %}active{% endblock %}
+{% block menu_product_classes_class %}active{% endblock %}
 
 {% block header_menu %}
   {% url "dashboard:product-class-list" as url %}
@@ -24,7 +24,7 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-  <ul class="breadcrumbs breadcrumbs--history">
+ 
     <li>
       <a href="{% url "dashboard:product-class-list" %}" class="breadcrumb">
         {% trans "Product types" context "Dashboard product types list" %}
@@ -44,7 +44,7 @@
         {% endif %}
       </span>
     </li>
-  </ul>
+ 
 {% endblock %}
 
 {% block header_extra %}

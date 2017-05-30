@@ -12,7 +12,7 @@ from . import forms
 from ...core.utils import get_paginator_items
 from ...product.models import (Product, ProductAttribute, ProductClass,
                                ProductImage, ProductVariant, Stock,
-                               StockLocation)
+                               StockLocation, ProductTax)
 from ..views import staff_member_required
 
 
@@ -125,9 +125,11 @@ def product_create(request, class_pk):
         messages.success(request, msg)
         return redirect('dashboard:product-update',
                         pk=product.pk)
+    else:
+        errors = product_form.errors
 
-    ctx = {'product_form': product_form, 'variant_form': variant_form,
-           'product': product}
+        ctx = {'product_form': product_form, 'variant_form': variant_form,
+           'product': product, 'errors':errors}
     return TemplateResponse(
         request, 'dashboard/product/product_form.html', ctx)
 
@@ -454,3 +456,60 @@ def stock_location_delete(request, location_pk):
     return TemplateResponse(
         request, 'dashboard/product/stock_locations/modal_confirm_delete.html',
         ctx)
+from .forms import ProductTaxForm
+@staff_member_required
+def tax_list(request):
+    form = ProductTaxForm(request)
+    ctx = {'tax': ProductTax.objects.all()}
+    return TemplateResponse(
+        request, 'dashboard/product/tax_list.html',
+        ctx)
+
+@staff_member_required
+def tax_add(request):
+    product_tax = ProductTax()
+    formadd = ProductTaxForm(request.POST or None,
+                                  instance=product_tax)
+    if formadd.is_valid():
+        tax = formadd.save()
+        msg = pgettext_lazy(
+            'Dashboard message', 'Added Tax') 
+        messages.success(request, msg)
+        return redirect('dashboard:tax-list')
+    else:
+        ctx = {'tax':ProductTax.objects.all(),'form':formadd,'errors':formadd.errors}
+   
+    return TemplateResponse(
+        request, 'dashboard/product/tax_form.html',
+        ctx)
+
+@staff_member_required
+def tax_edit(request, pk=None):
+    if pk:
+        instance = get_object_or_404(ProductTax, pk=pk)
+    else:
+        instance = ProductTax()
+    form = forms.ProductTaxForm(
+        request.POST or None, instance=instance)
+    if form.is_valid():
+        instance = form.save()
+        msg = pgettext_lazy(
+            'Product (Tax) message', 'Updated tax') if pk else pgettext_lazy(
+                'Sale (tax) message', 'Added tax')
+        messages.success(request, msg)
+        return redirect('dashboard:tax-list')
+    ctx = {'sale': instance, 'form': form,'tax_instance':instance}
+    return TemplateResponse(request, 'dashboard/product/tax_form.html', ctx)
+
+@staff_member_required
+def tax_delete(request, pk):
+    instance = get_object_or_404(ProductTax, pk=pk)
+    if request.method == 'POST':
+        instance.delete()
+        messages.success(
+            request,
+            pgettext_lazy('Tax message', 'Deleted Tax %s') % (instance.name,))
+        return redirect('dashboard:tax-list')
+    ctx = {'instance': instance}
+    return TemplateResponse(
+        request, 'dashboard/product/tax_list.html', ctx)

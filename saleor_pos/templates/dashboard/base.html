@@ -16,26 +16,79 @@
     {% endblock meta %}
 
     {% include 'favicon.html' %}
-    {% render_bundle 'vendor' 'css' %}
-    {% render_bundle 'dashboard' 'css' %}
+    
+    <style type="text/css">
+    .modal .modal-content {padding: 0px;}
+    .modal {
+        width:auto;
+        background-color: rgba(249, 246, 246, 0);
+        max-height: 100%;    
+         }      
+    .modal-content { padding: 0px;   }
+    /*label { font-size: 1.8rem;}*/
+    </style>
     <link rel="stylesheet" type="text/css" href="{% static "versatileimagefield/css/versatileimagefield.css" %}">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    
+
+    <!-- Global stylesheets -->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet" type="text/css">
+  <link href="{% static 'backend/css/icons/icomoon/styles.css' %}" rel="stylesheet" type="text/css">
+  <link href="{% static 'backend/css/bootstrap.css' %}" rel="stylesheet" type="text/css">
+
+  <link href="{% static 'backend/css/core.css' %}" rel="stylesheet" type="text/css">
+  <link href="{% static 'backend/css/components.css' %}" rel="stylesheet" type="text/css">
+  <link href="{% static 'backend/css/colors.css' %}" rel="stylesheet" type="text/css">
+  <!--image preview -->
+  <link href="{% static 'backend/js/plugins/ui/jasny-bootstrap/css/jasny-bootstrap.min.css' %}" rel="stylesheet" type="text/css">
+  <!-- bootstrap select -->
+  <link href="{% static 'backend/js/plugins/ui/bootstrap-select/css/bootstrap-select.min.css' %}" rel="stylesheet" type="text/css">
+  
+  <!-- /global stylesheets -->
 
     {% block custom_css %}{% endblock %}
   </head>
 
-  <body class="{% block body_class %}body-home{% endblock %}">
-    <header>
-      <nav class="top-nav" id="top-nav">
-        <div class="nav-wrapper">
-          <div class="right">
-            <ul id="user-action" class="dropdown-content">
-              <li class="user-name">
-                {{ request.user }}
-              </li>
-              <li class="divider"></li>
-              <li>
+  <body class="{% block body_class %}{% endblock %} navbar-top">
+ <div class='content-area'>
+  <!-- Main navbar -->
+  <div class="navbar navbar-inverse navbar-fixed-top bg-indigo" >
+    <div class="navbar-header" style="padding-right: : 30px;">
+      <a class="navbar-brand logo" href="{% url 'dashboard:index' %}">
+      
+        <svg data-src="{% static "dashboard/images/saleor_logo.svg" %}" height="38px" width="176px" />
+      </a>
+
+      <ul class="nav navbar-nav pull-right visible-xs-block">
+        <li><a data-toggle="collapse" data-target="#navbar-mobile"><i class="icon-tree5"></i></a></li>
+        <li><a class="sidebar-mobile-main-toggle"><i class="icon-paragraph-justify3"></i></a></li>
+      </ul>
+    </div>
+
+    <div class="navbar-collapse collapse" id="navbar-mobile">
+      <ul class="nav navbar-nav">
+        <li><a class="sidebar-control sidebar-main-toggle hidden-xs"><i class="icon-paragraph-justify3"></i></a></li>
+      </ul>
+
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="#">Text link</a></li>
+
+        <li>
+          <a href="#">
+            <i class="icon-cog3"></i>
+            <span class="visible-xs-inline-block position-right">Icon link</span>
+          </a>            
+        </li>
+
+        <li class="dropdown dropdown-user">
+          <a class="dropdown-toggle" data-toggle="dropdown">
+           <!--  <img src="{% static 'backend/images/image.png' %}" alt=""> -->
+            <span>{{ request.user }}</span>
+            <i class="caret"></i>
+          </a>
+
+          <ul class="dropdown-menu dropdown-menu-right">
+            <li><a href="#"><i class="icon-user-plus"></i> My profile</a></li>
+            <li>
                 <a href="/" target="_blank" class="waves-effect waves-teal">
                   {% trans "Visit storefront" context "Dashboard top navigation action" %}
                 </a>
@@ -43,159 +96,266 @@
                   {% trans "Style guide" context "Dashboard top navigation action" %}
                 </a>
               </li>
-              <li>
+            <li><a href="#"><span class="badge badge-warning pull-right">58</span> <i class="icon-comment-discussion"></i> Messages</a></li>
+            <li class="divider"></li>
+            <li><a href="#"><i class="icon-cog5"></i> Account settings</a></li>
+            <li>
                 <a href="{% url 'account_logout' %}" class="waves-effect waves-teal">
                   {% trans "Log out" context "Dashboard top navigation action" %}
                 </a>
               </li>
-            </ul>
-            <a class="dropdown-button" data-constrainwidth="false" href="#" data-activates="user-action">
-              <svg data-src="{% static "/dashboard/images/account_circle.svg" %}" width="24" height="24" fill="#fff" />
-            </a>
-            {% if SEARCH_IS_ENABLED %}
-              <a href="{% url "dashboard:search" %}" class="hide-on-med-and-up dropdown-button">
-                <svg data-src="{% static "dashboard/images/search.svg" %}" width="24" height="24" fill="#fff" />
-              </a>
-            {% endif %}
-          </div>
-          <ul class="left">
-            <li>
-              <a href="#" id="toggle-menu">
-                <svg data-src="{% static "dashboard/images/mobile_menu.svg" %}" width="24" height="24" />
-              </a>
-            </li>
-            <li>
-              <a href="{% url 'dashboard:index' %}" class="logo">
-                <svg data-src="{% static "dashboard/images/saleor_logo.svg" %}" height="38px" width="176px" />
-              </a>
-            </li>
-            <li class="search">
-              {% if SEARCH_IS_ENABLED %}
-                <form method="get" action="{% url "dashboard:search" %}" class="hide-on-small-only">
-                  <div class="input-field">
-                    <input id="search" type="search" placeholder="{% trans "Search" context "Dashboard search" %}" name="q" value="{% if query %}{{ query }}{% endif %}">
-                    <label>
-                      <svg data-src="{% static "dashboard/images/search.svg" %}" width="24" height="24" fill="#fff" />
-                    </label>
-                  </div>
-                </form>
-              {% endif %}
-            </li>
           </ul>
-          <ul class="side-nav" style="border-right:1px solid #d8d8d8;padding-right: 0px;padding-left: 0px;">
-            <li class="nav-home">
-              <a href="{% url 'dashboard:index' %}">
-              <i class="fa fa-home" style="font-size:20px;"></i>
-                {% trans "Home" context "Dashboard homepage" %}
-              </a>
-            </li>
-            <li class="side-nav-section" id="first">
-              <ul class="collapsible" data-collapsible="accordion">
-              <!-- sales management -->
-              <li class="side-nav-section">
-                  <a class="{% block menu_sales_class %}{% endblock %} collapsible-header"><i class="fa fa-at"></i>Sale Management</a>
-                  <a href="{% url 'dashboard:sale-list' %}" class="collapsible-body">
-                    <span>{% trans "Sales" context "Dashboard sales (discounts) list" %}</span>
-                  </a>
-                  <a href="{% url 'dashboard:orders' %}" class="collapsible-body">
-                    <span>{% trans "Orders" context "Dashboard orders list" %}</span>
-                  </a>
-                  <a href="{% url 'dashboard:customers' %}" class="collapsible-body">
-                    <span>{% trans "Customers" context "Dashboard customers list" %}</span>
-                  </a>
-                  <a href="{% url 'dashboard:voucher-list' %}" class="collapsible-body">
-                    <span>{% trans "Vouchers" context "Dashboard vouchers list" %}</span>
-                  </a>
-                </li>
-                <!-- Inventory Management -->
-                <li class="side-nav-section">
-                  <a class="{% block menu_products_class %}{% endblock %} collapsible-header"><i class="fa fa-shopping-basket"></i>Inventory</a>
-                  <a href="{% url 'dashboard:product-list' %}" class="collapsible-body">
-                    <span>{% trans "Products" context "Dashboard products list" %}</span>
-                  </a>
-                  <a  href="{% url 'dashboard:category-list' %}" class="collapsible-body">
-                    <span>{% trans "Categories" context "Dashboard categories list" %}</span>
-                  </a>
-                  <a  href="{% url 'dashboard:product-class-list' %}" class="collapsible-body">
-                    <span>{% trans "Product types" context "Dashboard product types list" %}</span>
-                  </a>
-                  <a href="{% url 'dashboard:product-attributes' %}" class="collapsible-body ">
-                     <span>{% trans "Attributes" context "Dashboard attributes list" %}</span>
-                  </a>
-                  <a href="{% url 'dashboard:product-stock-location-list' %}" class="collapsible-body ">
-                     <span>{% trans "Stock locations" context "Dashboard stock loactions list" %}</span>
-                  </a>
-                </li>
-                <!-- User Management -->
-                <li class="side-nav-section">
-                  <a class="collapsible-header"><i class="fa fa-user-circle"></i>User Management</a>
-                  <a class="collapsible-body"><span>user action one.</span></a>
-                  <a class="collapsible-body"><span>user action two.</span></a>
-                </li>
-                <!-- Messaging Management -->
-                <li class="side-nav-section">
-                  <a class="collapsible-header"><i class="fa fa-phone-square"></i>Messaging</a>
-                  <a class="collapsible-body"><span>messaging one</span></a>
-                  <a class="collapsible-body"><span>messaging two.</span></a>
-                </li>
-                <li class="side-nav-section">
-                  <a class="collapsible-header"><i class="fa fa-money"></i>Accounting</a>
-                  <a class="collapsible-body"><span>action one.</span></a>
-                  <a class="collapsible-body"><span>action two.</span></a>
-                </li>
-                <!-- Reports Management-->
-                <li class="side-nav-section">
-                  <a class="collapsible-header"><i class="fa fa-clipboard"></i>Reports</a>
-                  <a class="collapsible-body active"><span>action one.</span></a>
-                </li>
-                <!-- Settings Management-->
-                <li class="side-nav-section">
-                  <a class="{% block settings_class %}{% endblock %} collapsible-header"><i class="fa fa-cogs"></i>Settings</a>
-                  <a href="{% url 'dashboard:shipping-methods' %}" class="collapsible-body ">
-                     <span>{% trans "Shipping methods" context "Dashboard shipping methods list" %}</span>
-                  </a>
-                  <a href="{% url 'dashboard:site-index' %}" class="collapsible-body ">
-                     <span>{% trans "Site settings" context "Dashboard site settings" %}</span>
-                  </a>
-                </li>
-              </ul>
-            </li>
-            <li class="side-nav-section" id="version-indicator">
-                <p> Glo-POS </p>
-            </li>
-          </ul>
-        </div>
-      </nav>
-    </header>
-    <div class="subheader top-nav">
-      <div class="nav-wrapper container">
-        {% block breadcrumbs %}
-          <ul class="breadcrumbs">
-            <li class="visible-s">
-              <a href="#">
-                {% trans "Home" context "Dashboard homepage" %}
-              </a>
-            </li>
-          </ul>
-        {% endblock %}
-        {% block header_extra %}{% endblock %}
-      </div>
+        </li>
+      </ul>
     </div>
-    <main class="main">
-      <div class="container">
-        {% block content %}{% endblock %}
+  </div>
+  <!-- /main navbar -->
+  <!-- Page container -->
+  <div class="page-container">
+
+    <!-- Page content -->
+    <div class="page-content">
+      <!-- Main sidebar -->
+      <div class="sidebar sidebar-main sidebar-default sidebar-fixed">
+        <div class="sidebar-content">
+
+         
+
+
+          <!-- Main navigation -->
+          <div class="sidebar-category sidebar-category-visible">
+            <div class="category-content no-padding">
+              <ul class="navigation navigation-main navigation-accordion">
+
+                <!-- Main -->
+                <li class="navigation-header"><span>Home</span> <i class="icon-menu" title="Main pages"></i></li>
+
+                <li>
+                  <a href="{% url 'dashboard:index' %}">
+                    <i class="icon-home4"></i> 
+                    <span>Dashboard</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="javascript:;">
+                    <i class="icon-home4"></i> 
+                    <span>User management</span>
+                  </a>
+                  <ul>
+                    <li class="{% block menu_user_class %}{% endblock %}">
+                      <a href="{% url 'dashboard:users' %}"><i class='icon-bag'></i>users</a>
+                    </li>
+                  </ul>
+                </li>
+                <li>
+                  <a href="javascript:;">
+                    <i class="icon-home4"></i> 
+                    <span>Messaging</span>
+                  </a>
+                  <ul>
+                    <li class="{% block menu_messaging_class %}{% endblock %}">
+                      <a href="#"><i class='icon-bag'></i>message</a>
+                    </li>
+                  </ul>
+                </li>
+                <li>
+                  <a href="javascript:;">
+                    <i class="icon-home4"></i> 
+                    <span>Accounting</span>
+                  </a>
+                  <ul>
+                    <li class="{% block menu_account_class %}{% endblock %}">
+                      <a href="#"><i class='icon-bag'></i>acount</a>
+                    </li>
+                  </ul>
+                </li>
+                <li>
+                  <a href="javascript:;">
+                    <i class="icon-home4"></i> 
+                    <span>Reports</span>
+                  </a>
+                  <ul>
+                    <li class="{% block menu_report_class %}{% endblock %}">
+                      <a href="#"><i class='icon-bag'></i>report</a>
+                    </li>
+                  </ul>
+                </li>
+                <li id="first">
+                  <a href="{% url 'dashboard:product-list' %}"><i class="icon-stack"></i> <span>
+                     {% trans "Inventory" context "Dashboard catalogue" %}
+                  </span></a>
+                  <ul>
+                    <li class="{% block menu_products_class %}{% endblock %}">
+                    <a href="{% url 'dashboard:product-list' %}"><i class='icon-bag'></i>{% trans "Products" context "Dashboard products list" %}</a>
+                    </li>
+                    <li class="{% block menu_product_classes_class %}{% endblock %}">
+                    <a href="{% url 'dashboard:product-class-list' %}">
+                       {% trans "Product types" context "Dashboard product types list" %}
+                    </a>
+                    </li>
+                    <!-- categories -->
+                     <li class="{% block menu_categories_class %}{% endblock %}">
+                    <a href="{% url 'dashboard:category-list' %}"><i class='icon-package'></i> {% trans "Categories" context "Dashboard categories list" %}</a>
+                    </li>
+                    <li class="{% block menu_attributes_class %}{% endblock %}">
+                    <a href="{% url 'dashboard:product-attributes' %}">
+                        {% trans "Attributes" context "Dashboard attributes list" %}
+                    </a>
+                    </li>
+
+                    <li class="{% block menu_location_class %}{% endblock %}">
+                    <a href="{% url 'dashboard:product-stock-location-list' %}"><i class="icon-location4"></i>
+                       {% trans "Stock locations" context "Dashboard stock loactions list" %}
+                    </a>
+                    </li>               
+                    
+                  </ul>
+                </li>
+                <li><a href="#"><i class="icon-coins"></i> <span>{% trans "Discounts" context "Dashboard discounts list" %}</span></a>
+                  <ul>
+                    <li class="{% block menu_sales_class %}{% endblock %}">
+                    <a href="{% url 'dashboard:sale-list' %}">{% trans "Sales" context "Dashboard sales (discounts) list" %}
+                    </a>
+                    </li>
+                    <li class="{% block menu_tax_list %}{% endblock %}">
+                    <a href="{% url 'dashboard:tax-list' %}">Tax
+                    </a>
+                    </li>
+
+                    <li class="{% block menu_vouchers_class %}{% endblock %}">
+                    <a href="{% url 'dashboard:voucher-list' %}">
+                       {% trans "Vouchers" context "Dashboard vouchers list" %}
+                    </a>
+                    </li>
+                    </ul>
+                </li>
+                <!-- configuration menu -->
+                 <li><a href="#"><i class="icon-cogs"></i> <span> {% trans "Configuration"  context "Dashboard configuration" %}</span></a>
+                  <ul>
+                    <li class="{% block menu_delivery_class %}{% endblock %}">
+                    <a href="{% url 'dashboard:shipping-methods' %}">
+                         {% trans "Shipping methods" context "Dashboard shipping methods list" %}
+                    </a>
+                    </li>
+                    <li class="{% block menu_settings_class %}{% endblock %}">
+                    <a href="{% url 'dashboard:site-index' %}">
+                         {% trans "Site settings" context "Dashboard site settings" %}
+                    </a>
+                    </li>
+                  </ul>
+                </li>
+
+                <!-- /main -->
+
+              </ul>
+            </div>
+          </div>
+          <!-- /main navigation -->
+
+        </div>
       </div>
-    </main>
+      <!-- /main sidebar -->
+
+      <!-- Main content -->
+      <div class="content-wrapper">
+      
+        <!-- Page header -->
+        <div class="page-header">
+          
+
+          
+          <div class="breadcrumb-line breadcrumb-line-component content-group-" style='margin-top:20px;style="border-radius: 0;'>
+            <ul class="breadcrumb" style="border-radius: 0;
+margin-bottom: 0;">
+               <li><a href="{% url 'dashboard:index' %}"><span class="icon-home"></span data-popup="tooltip" tite='Edit product' data-placement="bottom" data-original-title="Back to dashboard"> Home</a></li>
+               {% block breadcrumbs %}
+              <li class="active">{% trans "Home" context "Dashboard homepage" %}</li>
+               {% endblock %}
+            </ul>
+
+            <ul class="breadcrumb-elements">
+              {% block header_extra %}
+              <li>              
+              <a href="#"><i class="icon-comment-discussion position-left"></i> Dashboard</a></li>
+              {% endblock %}
+            </ul>            
+          </div>
+           
+          <!-- /breacrumb component -->    
+         
+         
+        </div>
+        <!-- /page header -->
+
+
+        <!-- Content area -->
+        <div class="content" style="margin-top: 12px">
+
+
+             
+                {% block content %}{% endblock %}
+            
+          
+          <!-- Footer -->
+          <div class="footer text-muted">
+            &copy; . <a href="#">Glosoft Group</a> <a href="http://glosoftgroup.com" target="_blank"></a>
+          </div>
+          <!-- /footer -->
+
+        </div>
+        <!-- /content area -->
+        
+    </div>
+    <!-- end page content -->
+  </div>
+  <!-- end page container -->
+
+   
+   
     <div id="base-modal" class="modal"></div>
     <div id="base-modal-fixed" class="modal modal-fixed-footer"></div>
+    <!-- Core JS files -->
+  <script type="text/javascript" src="{% static 'backend/js/core/libraries/jquery.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'backend/js/core/libraries/bootstrap.min.js' %}"></script>
+  <!-- /core JS files -->
 
+  <!-- Theme JS files -->
+  <script type="text/javascript" src="{% static 'backend/js/core/app.js' %}"></script>
+  <script type="text/javascript" src="{% static 'backend/js/plugins/forms/selects/bootstrap_multiselect.js' %}"></script>
+
+  <script type="text/javascript" src="{% static 'backend/js/pages/form_multiselect.js' %}"></script>
+  <script type="text/javascript" src="{% static 'backend/js/plugins/ui/ripple.min.js' %}"></script>
+  <!-- /theme JS files -->
+  <script type="text/javascript" src="{% static 'backend/js/backend.js' %}"></script>
+  <!-- form js -->
+  <script type="text/javascript" src="{% static 'backend/js/plugins/forms/selects/select2.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'backend/js/plugins/forms/styling/uniform.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'backend/js/plugins/loaders/blockui.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'backend/js/pages/form_layouts.js' %}"></script>
+  <!-- image preview-->
+  <script type="text/javascript" src="{% static 'backend/js/plugins/ui/jasny-bootstrap/js/jasny-bootstrap.min.js' %}"></script>
+  <!-- bootstrap select -->
+  <script type="text/javascript" src="{% static 'backend/js/plugins/ui/bootstrap-select/js/bootstrap-select.min.js' %}"></script>
+  <!-- datepicker -->
+  <script type="text/javascript" src="{% static 'backend/js/plugins/pickers/pickadate/picker.js' %}"></script>
+  <script type="text/javascript" src="{% static 'backend/js/plugins/pickers/pickadate/picker.date.js' %}"></script>
+  <script type="text/javascript" src="{% static 'backend/js/plugins/pickers/pickadate/picker.time.js' %}"></script>
+  <script type="text/javascript" >
+      // Dropdown selectors
+     $('.pickadate-selectors').pickadate({
+         selectYears: true,
+         selectMonths: true
+     });
+
+   </script>
     <!-- Core Scripts - Include with every page -->
     <script type="text/javascript" src="{% url 'javascript-catalog' %}"></script>
-    {% render_bundle 'vendor' 'js' %}
-    {% render_bundle 'dashboard' 'js' %}
+    
+   
     <script src="{% static "versatileimagefield/js/versatileimagefield.js" %}"></script>
     {% include "dashboard/includes/_messages.html" %}
-
+   
     {% block custom_js %}{% endblock %}
+   </div>
   </body>
 </html>

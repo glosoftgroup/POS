@@ -1,0 +1,143 @@
+
+{% extends "dashboard/base.html" %}
+{% load staticfiles i18n %}
+{% load i18n %}
+{% load prices_i18n %}
+
+{% block title %}
+  users
+{% endblock %}
+
+{% block menu_user_class %}active{% endblock %}
+
+{% block content %}
+ <div class="row">
+  <div class="col s12">
+    <div class="panel panel-flat">
+      <div class="panel-heading">
+      <h3 class="panel-title">Create User Details<a class="heading-elements-toggle"><i class="icon-more"></i></a></h3>
+        <div class="heading-elements">
+          <ul class="icons-list">              
+            <li><a data-action="collapse"></a></li>       
+            <li><a data-action="close"></a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="panel-body">
+        <form class="form" enctype="multipart/form-data" id="user-details" name="user-details">
+        {% csrf_token %}
+          <div class="row">
+            <div class="col-md-4">
+            <label for="exampleInputEmail1">User Image</label>
+              <div class="form-group">
+                <!-- <label for="exampleInputEmail1">User Image</label> -->
+                <div class="fileinput fileinput-new" data-provides="fileinput">
+                  <div class="fileinput-new thumbnail" style="width: 200px; height: 150px;">
+                    <img data-src="holder.js/100%x100%" alt="..." src="{% static 'images/user.png' %}">
+                  </div>
+                  <div class="fileinput-preview fileinput-exists thumbnail" style="max-width: 200px; max-height: 150px;"></div>
+                  <div style="text-align: center;">
+                    <span class="btn btn-warning btn-file"><span class="fileinput-new">Select image</span><span class="fileinput-exists">Change</span><input type="file" name="image" id="image"></span>
+                    <a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            <div class="col-md-8">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" class="form-control" name="name" id="name" placeholder="Name">
+                  </div>
+                  <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" class="form-control" name="password" id="password" placeholder="Password">
+                   </div>
+                   <div class="form-group">
+                    <label for="exampleInputPassword1">National ID No:</label>
+                    <input type="text" class="form-control" name="nid" id="nid" placeholder="Id No">
+                   </div>
+                   <!-- <div class="form-group">
+                      <label for="group">User Role</label>
+                      <select class="selectpicker form-control" name="group" id="group">
+                        <option>Staff</option>
+                        <option>Admin</option>
+                        <option>Other</option>
+                      </select>
+                   </div> -->
+                </div>
+                <div class="col-md-6">
+                   <div class="form-group">
+                      <label for="email">Email address</label>
+                      <input type="email" class="form-control" name="email" id="email" placeholder="Email">
+                   </div>
+                   <div class="form-group">
+                    <label for="confirm_password">Confirm Password</label>
+                    <input type="password" class="form-control" name="confirm_password" id="confirm_password" placeholder="Confirm Password">
+                   </div>
+                   <div class="form-group">
+                    <label for="mobile">Phone</label>
+                    <input type="text" class="form-control" name="mobile" id="mobile" placeholder="Mobile">
+                   </div>
+                </div>
+              </div>
+              
+             
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+             <div class="pull-right" style="margin-top:40px;">
+              <a href="#" class="btn btn-default waves-effect waves-light">Cancel</a>
+              <button class="btn btn-primary waves-effect waves-light" onclick="return false" id="submit">Create User <i class="icon-arrow-right14 position-right"></i></button>
+             </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock%}
+{% block custom_js %}
+<script type="text/javascript">
+$('#submit').click(function(){   
+    // formData = new FormData();      
+    // jQuery("#image_to_upload").on("change", function() {
+        // var file = this.files[0];
+          // name = $("#name").val();
+        
+          var file = $('#image')[0].files[0];
+          var f = document.getElementById('user-details');
+          var formData = new FormData(f);
+          formData.append("image", file);
+          if (formData) {
+            $.ajax({
+                url: "{% url 'dashboard:user_process' %}",
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success:function(data){
+                   console.log(data);
+                   $("#name").val(' ');
+                   $("#email").val(' ');
+                   $("#password").val(' ');
+                   $("#confirm_password").val(' ');
+                   $("#nid").val(' ');
+                   $("#mobile").val(' ');              
+
+
+                },
+                error:function(error){
+                  console.log(error) 
+                }
+            });
+        }                       
+    // });
+});
+
+</script>
+{% endblock %}

@@ -28,6 +28,7 @@ urlpatterns = [
     url(r'^jsi18n/$', javascript_catalog, name='javascript-catalog'),
     url(r'^order/', include(order_urls, namespace='order')),
     url(r'^products/', include(product_urls, namespace='product')),
+   
     url(r'^profile/', include(userprofile_urls, namespace='profile')),
     url(r'^search/', include(search_urls, namespace='search')),
     url(r'^feeds/', include(feed_urls, namespace='data_feeds')),

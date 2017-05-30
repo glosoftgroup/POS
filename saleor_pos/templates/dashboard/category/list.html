@@ -8,7 +8,7 @@
 
 {% block body_class %}body-categories{% endblock %}
 
-{% block menu_products_class %}active{% endblock %}
+{% block menu_categories_class %}active{% endblock %}
 
 {% block header_menu %}
   {% if root %}
@@ -51,7 +51,7 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-  <ul class="breadcrumbs breadcrumbs--history">
+ 
     {% if path %}
       <li>
         <a href="{% url 'dashboard:category-list' %}">
@@ -59,7 +59,7 @@
         </a>
       </li>
     {% else %}
-      <li class="visible-s">
+      <li class="active">
         <span>
           {% trans "Categories" context "Dashboard categories list" %}
         </span>
@@ -87,7 +87,7 @@
         {% endif %}
       {% endfor %}
     {% endif %}
-  </ul>
+
 {% endblock %}
 
 {% block menu_catalogue_class %} active{% endblock %}

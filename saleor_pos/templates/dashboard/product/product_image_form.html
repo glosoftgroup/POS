@@ -21,7 +21,7 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-  <ul class="breadcrumbs breadcrumbs--history">
+  
     <li>
       <a href="{% url "dashboard:product-update" pk=product.pk %}#images" class="breadcrumbs--ellipsed-item">
         {{ product }}
@@ -50,7 +50,7 @@
         </span>
       </li>
     {% endif %}
-  </ul>
+  
 {% endblock %}
 
 {% block menu_catalogue_class %} active{% endblock %}

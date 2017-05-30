@@ -14,7 +14,7 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-  <ul class="breadcrumbs breadcrumbs--with-menu">
+  
     <li>
       <a href="{% url "dashboard:product-list" %}" class="breadcrumbs--ellipsed-item">
         {% trans "Products" context "Dashboard products list" %}
@@ -28,7 +28,7 @@
     <li>
       {% trans "Delete image" context "Delete image breadcrumbs" %}
     </li>
-  </ul>
+ 
 {% endblock %}
 
 {% block content %}

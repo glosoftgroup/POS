@@ -1,0 +1,1 @@
+@"c:\users\kibur\desktop\saleorpos\venv\scripts\python2.7.exe" "c:\users\kibur\desktop\saleorpos\venv\Scripts\markdown_py" %*

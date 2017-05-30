@@ -40,3 +40,4 @@ def get_low_stock_products():
     products = Product.objects.annotate(
         total_stock=Sum('variants__stock__quantity'))
     return products.filter(Q(total_stock__lte=threshold)).distinct()
+

@@ -15,7 +15,7 @@
 
 {% block body_class %}body-categories{% endblock %}
 
-{% block menu_products_class %}active{% endblock %}
+{% block menu_categories_class %}active{% endblock %}
 
 {% block page_title %}
   {% if category.pk %}
@@ -26,9 +26,9 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-  <ul class="breadcrumbs breadcrumbs--history">
+  
     <li>
-      <a href="{% url 'dashboard:category-list'%}" class="breadcrumbs--ellipsed-item">
+      <a href="{% url 'dashboard:category-list'%}" class="">
         {% trans "Categories" context "Dashboard categories list" %}
       </a>
     </li>
@@ -39,14 +39,14 @@
     </li>
     <li>
       {% if category.pk %}
-        <span class="breadcrumbs--ellipsed-item">{{ category }}</span>
+        <span class="">{{ category }}</span>
       {% else %}
-        <span class="breadcrumbs--ellipsed-item">
+        <span class="">
           {% trans "Add new category" context "Category detail breadcrumbs" %}
         </span>
       {% endif %}
     </li>
-  </ul>
+  
 {% endblock %}
 
 {% block menu_catalogue_class %} active{% endblock %}
