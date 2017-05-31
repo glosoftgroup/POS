@@ -42,7 +42,7 @@
   <link href="{% static 'backend/js/plugins/ui/jasny-bootstrap/css/jasny-bootstrap.min.css' %}" rel="stylesheet" type="text/css">
   <!-- bootstrap select -->
   <link href="{% static 'backend/js/plugins/ui/bootstrap-select/css/bootstrap-select.min.css' %}" rel="stylesheet" type="text/css">
-  
+ 
   <!-- /global stylesheets -->
 
     {% block custom_css %}{% endblock %}
@@ -144,6 +144,9 @@
                   <ul>
                     <li class="{% block menu_user_class %}{% endblock %}">
                       <a href="{% url 'dashboard:users' %}"><i class='icon-bag'></i>users</a>
+                    </li>
+                    <li class="{% block menu_perm_class %}{% endblock %}">
+                      <a href="{% url 'dashboard:perms' %}"><i class='icon-bag'></i>Permissions</a>
                     </li>
                   </ul>
                 </li>
@@ -318,6 +321,7 @@ margin-bottom: 0;">
   <script type="text/javascript" src="{% static 'backend/js/core/libraries/jquery.min.js' %}"></script>
   <script type="text/javascript" src="{% static 'backend/js/core/libraries/bootstrap.min.js' %}"></script>
   <!-- /core JS files -->
+   <script src="{% static 'backend/js/plugins/ui/jquery-validation/jquery.validate.js' %} "></script>
 
   <!-- Theme JS files -->
   <script type="text/javascript" src="{% static 'backend/js/core/app.js' %}"></script>
@@ -340,6 +344,14 @@ margin-bottom: 0;">
   <script type="text/javascript" src="{% static 'backend/js/plugins/pickers/pickadate/picker.js' %}"></script>
   <script type="text/javascript" src="{% static 'backend/js/plugins/pickers/pickadate/picker.date.js' %}"></script>
   <script type="text/javascript" src="{% static 'backend/js/plugins/pickers/pickadate/picker.time.js' %}"></script>
+
+  <!-- Theme JS files -->
+  <script type="text/javascript" src="{% static 'backend/js/plugins/notifications/pnotify.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'backend/js/plugins/notifications/noty.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'backend/js/plugins/notifications/jgrowl.min.js' %}"></script>
+
+  <script type="text/javascript" src="{% static 'backend/js/pages/components_notifications_other.js' %}"></script>
+
   <script type="text/javascript" >
       // Dropdown selectors
      $('.pickadate-selectors').pickadate({

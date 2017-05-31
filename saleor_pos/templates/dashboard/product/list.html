@@ -98,7 +98,7 @@
                 </tfoot>
                 <tbody>
                  {% for product in products %}
-                  <tr>
+                  <tr data-action-go="{% url 'dashboard:product-update' pk=product.pk %}">
                     <td>#{{ product.id }}</td>
                     <!-- image -->
                     <td><a href="{% url 'dashboard:product-update' pk=product.pk %}"><img src="{% product_first_image product size="60x60" method="crop" %}" 

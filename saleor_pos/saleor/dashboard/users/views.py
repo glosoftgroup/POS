@@ -32,11 +32,12 @@ from ...userprofile.models import Staff
 
 @staff_member_required
 def users(request):
-  return TemplateResponse(request, 'dashboard/users/users.html', {})
+    users = Staff.objects.all()
+    return TemplateResponse(request, 'dashboard/users/users.html', {'users':users})
 
 @staff_member_required
 def user_add(request):
-  return TemplateResponse(request, 'dashboard/users/add_user.html', {})
+    return TemplateResponse(request, 'dashboard/users/add_user.html')
 
 @staff_member_required
 @csrf_exempt
@@ -60,3 +61,49 @@ def user_process(request):
         )
         new_user.save()
         return HttpResponse("success")
+
+def user_detail(request, pk):
+    user = get_object_or_404(Staff, pk=pk)
+    return TemplateResponse(request, 'dashboard/users/detail.html', {'user':user})
+
+def user_delete(request, pk):
+    user = get_object_or_404(Staff, pk=pk)
+    if request.method == 'POST':
+        user.delete()
+        return HttpResponse('success')
+def user_edit(request, pk):
+    user = get_object_or_404(Staff, pk=pk)
+    ctx = {'user': user}
+    return TemplateResponse(request, 'dashboard/users/edit_user.html', ctx)
+
+def user_update(request, pk):
+    user = get_object_or_404(Staff, pk=pk)
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        nid = request.POST.get('nid')
+        mobile = request.POST.get('mobile')
+        image= request.FILES.get('image')
+        if password == user.password:
+            encr_password = user.password
+        else:
+            encr_password = pbkdf2_sha256.encrypt(password, rounds=1000,salt_size=32)
+        if image :
+            Staff.objects.filter(pk=pk).update(
+            name = name,
+            email = email,
+            password = encr_password,
+            nid = nid,
+            mobile = mobile,
+            image = image)
+            return HttpResponse("success with image")
+        else:
+            Staff.objects.filter(pk=pk).update(
+            name = name,
+            email = email,
+            password = encr_password,
+            nid = nid,
+            mobile = mobile)
+            return HttpResponse("success without image")
+        

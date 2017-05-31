@@ -22,7 +22,7 @@
   <div class="col s12">
     <div class="panel panel-flat">
       <div class="panel-heading">
-      <h3 class="panel-title">Create User Details<a class="heading-elements-toggle"><i class="icon-more"></i></a></h3>
+      <h3 class="panel-title">Update User Details<a class="heading-elements-toggle"><i class="icon-more"></i></a></h3>
         <div class="heading-elements">
           <ul class="icons-list">              
             <li><a data-action="collapse"></a></li>       
@@ -31,7 +31,7 @@
         </div>
       </div>
       <div class="panel-body">
-        <form class="form" enctype="multipart/form-data" id="user-details" name="user-details">
+        <form class="form" enctype="multipart/form-data" id="update-details" name="update-details">
         {% csrf_token %}
           <div class="row">
             <div class="col-md-4">
@@ -39,8 +39,8 @@
               <div class="form-group">
                 <!-- <label for="exampleInputEmail1">User Image</label> -->
                 <div class="fileinput fileinput-new" data-provides="fileinput">
-                  <div class="fileinput-new thumbnail" style="width: 200px; height: 150px;">
-                    <img data-src="holder.js/100%x100%" alt="..." src="{% static 'images/user.png' %}">
+                  <div class="fileinput-new thumbnail" style="width: 150px; height: auto;">
+                    <img data-src="holder.js/100%x100%" alt="..." src="{% if user.image %}{{ user.image.url }}{% else %}{% static 'images/user.png' %} {% endif %}">
                   </div>
                   <div class="fileinput-preview fileinput-exists thumbnail" style="max-width: 200px; max-height: 150px;"></div>
                   <div style="text-align: center;">
@@ -56,15 +56,15 @@
                 <div class="col-md-6">
                   <div class="form-group">
                     <label for="name">Name</label>
-                    <input type="text" class="form-control" name="name" id="name" placeholder="Name">
+                    <input type="text" class="form-control" name="name" id="name" placeholder="Name" value="{{ user.name}}">
                   </div>
                   <div class="form-group">
                     <label for="password">Password</label>
-                    <input type="password" class="form-control" name="password" id="password" placeholder="Password">
+                    <input type="password" class="form-control" name="password" id="password" placeholder="Password" value="{{ user.password}}">
                    </div>
                    <div class="form-group">
                     <label for="exampleInputPassword1">National ID No:</label>
-                    <input type="text" class="form-control" name="nid" id="nid" placeholder="Id No">
+                    <input type="text" class="form-control" name="nid" id="nid" placeholder="Id No" value="{{ user.nid}}">
                    </div>
                    <!-- <div class="form-group">
                       <label for="group">User Role</label>
@@ -78,15 +78,15 @@
                 <div class="col-md-6">
                    <div class="form-group">
                       <label for="email">Email address</label>
-                      <input type="email" class="form-control" name="email" id="email" placeholder="Email">
+                      <input type="email" class="form-control" name="email" id="email" placeholder="Email" value="{{ user.email}}">
                    </div>
                    <div class="form-group">
                     <label for="confirm_password">Confirm Password</label>
-                    <input type="password" class="form-control" name="confirm_password" id="confirm_password" placeholder="Confirm Password">
+                    <input type="password" class="form-control" name="confirm_password" id="confirm_password" placeholder="Confirm Password" value="{{ user.password}}">
                    </div>
                    <div class="form-group">
                     <label for="mobile">Phone</label>
-                    <input type="text" class="form-control" name="mobile" id="mobile" placeholder="Mobile">
+                    <input type="text" class="form-control" name="mobile" id="mobile" placeholder="Mobile" value="{{ user.mobile}}">
                    </div>
                 </div>
               </div>
@@ -99,7 +99,7 @@
              <div class="pull-right" style="margin-top:40px;">
               <a href="{% url 'dashboard:users' %}" class="btn btn-default waves-effect waves-light">Cancel</a>
               <!-- <button class="btn btn-primary waves-effect waves-light" onclick="return false" id="submit" type="submit">Create User <i class="icon-arrow-right14 position-right"></i></button> -->
-              <button class="btn btn-primary waves-effect waves-light" id="submit" type="submit">Create User <i class="icon-arrow-right14 position-right"></i></button>
+              <button class="btn btn-primary waves-effect waves-light" id="submit" type="submit">Update User <i class="icon-arrow-right14 position-right"></i></button>
              </div>
             </div>
           </div>
@@ -111,11 +111,10 @@
 {% endblock%}
 {% block custom_js %}
 <script type="text/javascript">
-// $(document).ready(function(){
-
+$(document).ready(function(){
 
 // function validateForm(){
-  $('#user-details').validate({
+  $('#update-details').validate({
     rules:{
         name: {
           required:true,
@@ -164,27 +163,21 @@
     submitHandler: function() { 
       // alert("Submitted!");
       var file = $('#image')[0].files[0];
-      if(file != ''){
-          var f = document.getElementById('user-details');
+      // if(file != null){
+          var f = document.getElementById('update-details');
           var formData = new FormData(f);
           formData.append("image", file);
           if (formData) {
                 $.ajax({
-                    url: "{% url 'dashboard:user_process' %}",
+                    url: "{% url 'dashboard:user-update' pk=user.pk %}",
                     type: "POST",
                     data: formData,
                     processData: false,
                     contentType: false,
                     success:function(data){
-                       console.log(data);
-                       $("#name").val(' ');
-                       $("#email").val(' ');
-                       $("#password").val(' ');
-                       $("#confirm_password").val(' ');
-                       $("#nid").val(' ');
-                       $("#mobile").val(' ');              
+                       console.log(data);             
 
-                       $.jGrowl('Staff added successfully', {
+                       $.jGrowl('Updated successfully', {
                           header: 'Well done!',
                           theme: 'bg-success'
                        });
@@ -199,15 +192,15 @@
                     }
                 });
             } 
-      }else{
-        $.jGrowl('Image is empty fill and try submitting again', {
-            header: 'Oh snap!',
-            theme: 'bg-danger'
-        });
-      }
+      // }else{
+      //   $.jGrowl('Image is empty fill and try submitting again', {
+      //       header: 'Oh snap!',
+      //       theme: 'bg-danger'
+      //   });
+      // }
     }
   });
 // }
-// });
+});
 </script>
 {% endblock %}

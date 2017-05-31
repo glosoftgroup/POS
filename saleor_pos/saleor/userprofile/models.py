@@ -157,7 +157,7 @@ class Staff(models.Model):
     nid = models.CharField(max_length=100, null=True,blank=True)
     mobile = models.CharField(max_length=100, null=True, blank=True)
     active = models.BooleanField(default=True)
-    image = models.FileField(upload_to='staff')
+    image = models.FileField(upload_to='staff', blank=True, null=True)
 
     def verify_password(self, raw_password):
         return pbkdf2_sha256.encrypt(raw_password, self.password)
