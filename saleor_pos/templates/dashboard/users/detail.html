@@ -34,14 +34,26 @@
 			          <img src="{% static 'images/user.png' %}" alt="" class="img-circle img-thumbnail" style="width: 100px;height: 100px;" />
 			       {% endif %}
 			       <h1>{{user.name }}</h1>
-			       <span>staff</span>
+			       <span>{% if user.is_superuser == True %}Admin{% else %} Staff {% endif %}</span>
 			    </div>
 		       <div class="right">
 			      <p> Email: {{user.email }}</p>
 			      <p> National ID No: {{user.nid }}</p>
 			      <p> Mobile No: {{user.mobile }}</p>  
 		       </div>
-		     </div>   
+		     </div> 
+         <div class="col-md-6 col0xs-12">
+         <h2> Permissions 
+            <a href="{% url 'dashboard:user-edit' pk=user.pk %}" class="btn btn-default btn-sm"><i class="icon-pencil7" style="font-size: 11px;"></i> edit</a>
+         </h2>
+         {% if permissions %}
+           {% for permission in permissions %}
+           <li>{{ permission.name }}</li>
+           {% endfor %}
+          {% else %}
+          <li>No permissions assigned</li>
+          {% endif %}
+         </div> 
    </div>
   </div>   
 <!--     <div class="col-md-6 col-xs-12 right">            

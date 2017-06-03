@@ -14,6 +14,7 @@ urlpatterns = [
         url(r'^delete/(?P<pk>[0-9]+)/$', views.user_delete, name='user-delete'),
         url(r'^edit/(?P<pk>[0-9]+)/$', views.user_edit, name='user-edit'),
         url(r'^user_update(?P<pk>[0-9]+)/$', views.user_update, name='user-update'),
+        url(r'^user_assign_permission/$', views.user_assign_permission, name='user_assign_permission'),
 ]
 
 if settings.DEBUG:

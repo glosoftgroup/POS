@@ -112,6 +112,7 @@ class UserManager(BaseUserManager):
 
 class User(PermissionsMixin, AbstractBaseUser, index.Indexed):
     email = models.EmailField(pgettext_lazy('User field', 'email'), unique=True)
+    name = models.CharField(max_length=100, null=True, blank=True)
     addresses = models.ManyToManyField(
         Address, blank=True,
         verbose_name=pgettext_lazy('User field', 'addresses'))
@@ -121,6 +122,9 @@ class User(PermissionsMixin, AbstractBaseUser, index.Indexed):
     is_active = models.BooleanField(
         pgettext_lazy('User field', 'active'),
         default=True)
+    nid = models.CharField(max_length=100, null=True,blank=True)
+    mobile = models.CharField(max_length=100, null=True, blank=True)
+    image = models.FileField(upload_to='staff', blank=True, null=True)
     date_joined = models.DateTimeField(
         pgettext_lazy('User field', 'date joined'),
         default=timezone.now, editable=False)
@@ -156,7 +160,10 @@ class Staff(models.Model):
     password = models.CharField(max_length=1000, null=True, blank=True)
     nid = models.CharField(max_length=100, null=True,blank=True)
     mobile = models.CharField(max_length=100, null=True, blank=True)
-    active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(
+        pgettext_lazy('User field', 'staff status'),
+        default=False)
     image = models.FileField(upload_to='staff', blank=True, null=True)
 
     def verify_password(self, raw_password):

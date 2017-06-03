@@ -38,6 +38,7 @@
   <link href="{% static 'backend/css/core.css' %}" rel="stylesheet" type="text/css">
   <link href="{% static 'backend/css/components.css' %}" rel="stylesheet" type="text/css">
   <link href="{% static 'backend/css/colors.css' %}" rel="stylesheet" type="text/css">
+  <link href="{% static 'backend/css/extras/animate.min.css' %}" rel="stylesheet" type="text/css">
   <!--image preview -->
   <link href="{% static 'backend/js/plugins/ui/jasny-bootstrap/css/jasny-bootstrap.min.css' %}" rel="stylesheet" type="text/css">
   <!-- bootstrap select -->
@@ -87,7 +88,7 @@
           </a>
 
           <ul class="dropdown-menu dropdown-menu-right">
-            <li><a href="#"><i class="icon-user-plus"></i> My profile</a></li>
+            <li><a href="{% url 'dashboard:user-detail' pk=user.pk %}"><i class="icon-user-plus"></i> My profile</a></li>
             <li>
                 <a href="/" target="_blank" class="waves-effect waves-teal">
                   {% trans "Visit storefront" context "Dashboard top navigation action" %}
@@ -98,7 +99,7 @@
               </li>
             <li><a href="#"><span class="badge badge-warning pull-right">58</span> <i class="icon-comment-discussion"></i> Messages</a></li>
             <li class="divider"></li>
-            <li><a href="#"><i class="icon-cog5"></i> Account settings</a></li>
+            <!-- <li><a href="#"><i class="icon-cog5"></i> Account settings</a></li> -->
             <li>
                 <a href="{% url 'account_logout' %}" class="waves-effect waves-teal">
                   {% trans "Log out" context "Dashboard top navigation action" %}
@@ -142,9 +143,11 @@
                     <span>User management</span>
                   </a>
                   <ul>
+                    {% if perms.userprofile.view_user %}
                     <li class="{% block menu_user_class %}{% endblock %}">
                       <a href="{% url 'dashboard:users' %}"><i class='icon-bag'></i>users</a>
                     </li>
+                    {% endif %}
                     <li class="{% block menu_perm_class %}{% endblock %}">
                       <a href="{% url 'dashboard:perms' %}"><i class='icon-bag'></i>Permissions</a>
                     </li>
