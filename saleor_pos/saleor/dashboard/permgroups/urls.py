@@ -7,6 +7,8 @@ from django.conf.urls.static import static
 
 urlpatterns = [
         url(r'^$', views.perms, name='perms'),
+        url(r'^add_group/$', views.create_group, name='add_group'),
+        url(r'^group_assign_permission/$', views.group_assign_permission, name='group_assign_permission'),
 ]
 
 if settings.DEBUG:

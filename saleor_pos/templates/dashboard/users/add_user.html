@@ -78,6 +78,20 @@
                             <label for="exampleInputPassword1">National ID No:</label>
                             <input type="text" class="form-control" name="nid" id="nid" placeholder="Id No">
                            </div>
+                           <div class="form-group">
+                              <label>assign permission group</label>
+                              <select data-placeholder="Select a State..." class="select  select2-hidden-accessible" tabindex="-1" aria-hidden="true">
+                                <option></option>
+                                  <option value="AZ">Arizona</option>
+                                  <option value="CO">Colorado</option>
+                                  <option value="ID">Idaho</option>
+                                  <option value="WY">Wyoming</option>
+                                  <option value="AL">Alabama</option>
+                                  <option value="IA">Iowa</option>
+                                  <option value="KS">Kansas</option>
+                                  <option value="KY">Kentucky</option>
+                              </select>
+                            </div>
                         </div>
                         <div class="col-md-6">
                            <div class="form-group">
@@ -101,7 +115,6 @@
                   <div class="row">
                     <div class="col-md-12">
                      <div class="pull-right" style="margin-top:40px;">
-                     <a href="javascript:;" class="btn btn-danger waves-effect waves-light" id="next-tab">next</a>
                       <a href="{% url 'dashboard:users' %}" class="btn btn-default waves-effect waves-light">Cancel</a>
                       <!-- <button class="btn btn-primary waves-effect waves-light" onclick="return false" id="submit" type="submit">Create User <i class="icon-arrow-right14 position-right"></i></button> -->
                       <button class="btn btn-primary waves-effect waves-light" id="submit" type="submit">Create User <i class="icon-arrow-right14 position-right"></i></button>

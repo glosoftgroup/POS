@@ -10,6 +10,7 @@ from django.views.decorators.http import require_http_methods
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.hashers import make_password
+from django.contrib.auth.decorators import login_required, permission_required
 
 from ...core.utils import get_paginator_items
 from ..views import staff_member_required
@@ -33,11 +34,13 @@ from ...userprofile.models import User
 
 
 @staff_member_required
+@permission_required('userprofile.view_user', raise_exception=True)
 def users(request):
 	users = User.objects.all().order_by('id')
 	return TemplateResponse(request, 'dashboard/users/users.html', {'users':users})
 
 @staff_member_required
+@permission_required('userprofile.add_user', raise_exception=True)
 def user_add(request):
 	permissions = Permission.objects.all()
 	for permission in permissions:
@@ -106,21 +109,21 @@ def user_update(request, pk):
 		else:
 			encr_password = make_password(password)
 		if image :
-			User.objects.filter(pk=pk).update(
-			name = name,
-			email = email,
-			password = encr_password,
-			nid = nid,
-			mobile = mobile,
-			image = image)
+			user.name = name
+			user.email = email
+			user.password = encr_password
+			user.nid = nid
+			user.mobile = mobile
+			user.image = image
+			user.save()
 			return HttpResponse("success with image")
 		else:
-			User.objects.filter(pk=pk).update(
-			name = name,
-			email = email,
-			password = encr_password,
-			nid = nid,
-			mobile = mobile)
+			user.name = name
+			user.email = email
+			user.password = encr_password
+			user.nid = nid
+			user.mobile = mobile
+			user.save()
 			return HttpResponse("success without image")
 
 @csrf_exempt
@@ -136,7 +139,7 @@ def user_assign_permission(request):
 			user.is_active = False
 			user.user_permissions.remove(*user_has_permissions)
 			user.save()
-			return HttpResponse('deactivsted')
+			return HttpResponse('deactivated')
 		else:
 			if user_has_permissions in permission_list:
 				not_in_user_permissions = list(set(permission_list) - set(user_has_permissions))
@@ -153,5 +156,7 @@ def user_assign_permission(request):
 				user.user_permissions.add(*not_in_user_permissions)
 				user.save()
 				return HttpResponse('permissions updated')
+
+
 
 		
