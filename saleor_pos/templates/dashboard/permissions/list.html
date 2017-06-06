@@ -5,7 +5,7 @@
 {% load prices_i18n %}
 
 {% block title %}
-  users
+  Permissions
 {% endblock %}
 
 {% block menu_user_class %}active{% endblock %}
@@ -37,6 +37,7 @@
           <ul class="nav nav-tabs nav-tabs-highlight">
             <li class="active" id="profile-tab"><a href="#profile" data-toggle="tab" class="legitRipple" aria-expanded="false">create group</a></li>
             <li class="" id="permissions-tab"><a href="#permissions" data-toggle="tab" class="legitRipple" aria-expanded="true">manage group permissions</a></li>
+            <li class="" id="groups-tab"><a href="#groups" data-toggle="tab" class="legitRipple" aria-expanded="true">manage group</a></li>
 
           </ul>
 
@@ -57,9 +58,9 @@
                             <label for="exampleInputPassword1">Select Users:</label>
                             <div class="multi-select-full">
                               <select class="multiselect-full-featured" multiple="multiple" style="display: none;" name="user_select" id="multiple" placeholder="select a user...">
-                              {% for user in users %}
-                                {% if user.is_active == True and not user.is_superuser%}
-                                   <option value="{{user.id}}"> {% if user.name %}{{user.name}}{% else %}{{user.email}}{% endif %}</option>
+                              {% for usr in users %}
+                                {% if usr.is_active == True and usr.is_superuser == False %}
+                                   <option value="{{user.id}}"> {% if usr.name %}{{usr.name}}{% else %}{{usr.email}}{% endif %}</option>
                                 {% endif %}
                               {% endfor %}
                               </select>
@@ -80,7 +81,7 @@
                         <div class="col-md-6">
                           <div class="form-group">
                             <label>select a group to view users in that group</label>
-                            <select data-placeholder="Select a Group..." class="select  select2-hidden-accessible" tabindex="-1" aria-hidden="true">
+                            <select data-placeholder="Select a Group..." class="select  select2-hidden-accessible group_select_users" tabindex="-1" aria-hidden="true">
                               {% for group in groups %}
                                 <option value="{{group.id}}">{{group.name}}</option>
                               {% endfor %}
@@ -88,7 +89,8 @@
                           </div>
                            <div class="form-group">
                             <label for="confirm_password">Users List</label>
-                            <div class="table-responsive pre-scrollable" style="max-height: 290px;">
+                            <div class="table-responsive pre-scrollable group-users" style="max-height: 290px;">
+                            
                               <table class="table table-framed">
                                 <thead>
                                   <tr>
@@ -97,42 +99,29 @@
                                   </tr>
                                 </thead>
                                 <tbody>
-                                  <tr>
-                                    <td>1</td>
-                                    <td>Eugene</td>
-                                  </tr>
-                                  <tr>
-                                    <td>2</td>
-                                    <td>Victoria</td>
-                                  </tr>
-                                  <tr>
-                                    <td>3</td>
-                                    <td>James</td>
-                                  </tr>
-                                  <tr>
-                                    <td>4</td>
-                                    <td>Stanley</td>
-                                  </tr>
-                                  <tr>
-                                    <td>5</td>
-                                    <td>Winnie</td>
-                                  </tr>
-                                  <tr>
-                                    <td>6</td>
-                                    <td>Garry</td>
-                                  </tr>
-                                  <tr>
-                                    <td>7</td>
-                                    <td>Ian</td>
-                                  </tr>
-                                  <tr>
-                                    <td>8</td>
-                                    <td>John</td>
-                                  </tr>
-                                  <tr>
-                                    <td>9</td>
-                                    <td>Frank</td>
-                                  </tr>
+                                <tr>
+                                  <div class="loader" style="margin: 20px 0px 0px 200px;display: none;">
+                                    <img src="{% static 'images/ripple-loader.svg' %}">
+                                  </div>
+                                </tr>
+                                  {% if users_in_group %}
+                                    {% for user in users_in_group %}
+                                      <tr class="animated fadeIn">
+                                        <td>{{ forloop.counter }}</td>
+                                        <td>
+                                        {% if user.name %}
+                                        {{ user.name}}
+                                        {% else %}
+                                        {{ user.email }}
+                                        {% endif %}
+                                        </td>
+                                      </tr>
+                                    {% endfor %}
+                                    {% else %}
+                                    <tr class="animated fadeIn">
+                                       <td>No users in this group</td>
+                                    </tr>
+                                  {% endif %}
                                 </tbody>
                               </table>
                             </div>
@@ -149,19 +138,20 @@
               <div class="row">                
                   <div class="col-md-6 col-md-offset-3">
                     <p class="content-group">Define group permissions by ticking on particular access options. 
-                  <input class="user_id" type="hidden" name="user_id" value=""></p>
+                   <input class="group_id" type="hidden" name="group_id" value=""></p>
                     <div class="form-group">
                       <label>select a group to view permissions in that group</label>
-                      <select data-placeholder="Select a Group..." class="select  select2-hidden-accessible" tabindex="-1" aria-hidden="true">
+                      <select data-placeholder="Select a Group..." class="select  select2-hidden-accessible group_select_permissions" tabindex="-1" aria-hidden="true">
                             {% for group in groups %}
                               <option value="{{group.id}}">{{group.name}}</option>
                             {% endfor %}
                           </select>
                     </div>
+                    <span class="current_group animated shake" style="color: red;font-size:20px;"></span>
                   </div>
                 </div>
-
-            <div class="row">
+          <div class="content_display">
+            <div class="row">    
               <div class="col-md-12">
                    <div class="col-md-3">
                     <div class="form-group">
@@ -180,10 +170,7 @@
                         </label>
                       </div>
                      </div>
-                    </div>
-                   
-
-                    
+                    </div>                                    
                 </div>
                  <div class="col-md-12">
                  <h5>Inventory Management</h5>
@@ -392,12 +379,21 @@
                     </div>
                   </div>
             </div>
+          </div><!-- content display-->
             <!-- end user-->
             <div class="row">
               <div class="col-md-8 col-md-offset-2 text-center">
-                <button class="btn btn-primary id="permission-btn">Submit Permissions</button>
+                <button class="btn btn-primary" id="permission-btn">Submit Permissions</button>
               </div>
             </div>
+           </div>
+           <div class="tab-pane animated fadeIn" id="groups">
+              <div class="row">                
+                  <div class="col-md-6 col-md-offset-3">
+                  view of groups
+                  </div>
+              </div>
+             
            </div>
 
           </div>
@@ -412,21 +408,78 @@
 {% endblock%}
 {% block custom_js %}
 <script type="text/javascript">
-/* disable th permissions tab code */
+function show(){
+  alert('sth')
+}
+
+
+/*--- load users on select ---*/
+$( ".group_select_permissions" ).change(function() {
+    // alert( $(this).val() );
+        var g_u_id = $(this).val();
+    $.ajax({
+        url: "{% url 'dashboard:group_edit' %}",
+        type: "POST",
+        data: {
+           'id': g_u_id,
+           'csrfmiddlewaretoken': '{{ csrf_token }}'
+        },
+        success: function(data){
+          $('.content_display').html(data);
+        },
+        error:function(error){
+           $.jGrowl(error, {
+            header: 'Oops!',
+            theme: 'bg-danger'
+          });
+        }
+    });
+});
+/*--- load group permissions on select ---*/
+var $loading = $('.loader').hide();
+    $(document)
+          .ajaxStart(function () {
+            $loading.show();
+          })
+          .ajaxStop(function () {
+            $loading.hide();
+          });
+$( ".group_select_users" ).change(function() {
+    var g_u_id = $(this).val();
+    $.ajax({
+        url: "{% url 'dashboard:get_group_users' %}",
+        type: "POST",
+        data: {
+           'id': g_u_id,
+           'csrfmiddlewaretoken': '{{ csrf_token }}'
+        },
+        success: function(data){
+          $('.group-users').html(data);
+        },
+        error:function(error){
+           $.jGrowl(error, {
+            header: 'Oops!',
+            theme: 'bg-danger'
+          });
+        }
+    });
+});
+/*--- disable th permissions tab code ---*/
 $('#next-tab').click(function(){
   $('#permissions-tab').addClass('disabled').find('a').removeAttr('data-toggle').attr('href','javascript:;');
 });
+/*--- disable tab ---*/
 function disable_profile_tab(){
   $('#rofile-tab').addClass('disabled').find('a').removeAttr('data-toggle').attr('href','javascript:;');
 }
-/* code to move to next tab */
-function next_tab(){
-  $('#profile').removeClass('active');
-  $('#profile-tab').removeClass('active');
-  $('#permissions').addClass('active');
-  $('#permissions-tab').addClass('active');
+/*--- move to next tab ---*/
+function next_tab(remove, add){
+  $('#'+remove).removeClass('active');
+  $('#'+remove+'-tab').removeClass('active');
+  $('#'+add).addClass('active');
+  $('#'+add+'-tab').addClass('active');
 }
-/* if not login permission */
+/*--- if not login permission checked ---*/
 $("#can-login").click(function () {
   var checked = $(this).is(':checked');
   if(checked){
@@ -448,8 +501,8 @@ $("#can-login").click(function () {
       });
   }
 });
-/* end login */
-/* check all */
+
+/*--- check all ---*/
 $("#checkAll").click(function () {
   var checked = $(this).is(':checked');
   if(checked){
@@ -467,8 +520,8 @@ $("#checkAll").click(function () {
       });
   }
 });
-/* endcheck all */
-/* on each check */
+
+/*--- status on each check ---*/
 $( ".check" ).on( "click", function(){
   var checked = $(this).is(':checked');
   if(checked){
@@ -481,12 +534,13 @@ $( ".check" ).on( "click", function(){
     $(this).parent().parent().parent().siblings('span').hide();
   }
 } );
-/* end each check*/
- /* select rule */
+
+ /*--- create group ---*/
+ //**@ validator rule
  $.validator.addMethod("valueNotEquals", function(value, element, arg){
   return arg != value;
  }, "Value must not equal arg.");
-
+ //**@ validate form
   $('#group-form').validate({
     rules:{
         group_name: {
@@ -504,16 +558,16 @@ $( ".check" ).on( "click", function(){
       user_select:{ valueNotEquals: "please select a user!" }
     },
     submitHandler: function() { 
-      if(!$('#multiple').val()){
-        $('.select-error').text('This field is required');
-      }else{
-    
+          if(!$('#multiple').val()){
+            $('.select-error').text('This field is required');
+          }else{
+          //**@ get group name and user array
           var group_name = $('#group_name').val();
           var raw_users = $("#multiple :selected").map(function(){
-            return $(this).val();
-          }).get();
+                             return $(this).val();
+                          }).get();
           var users = raw_users.map(Number);
-          console.log('name: '+group_name, users);
+
             $.ajax({
                 url: "{% url 'dashboard:add_group' %}",
                 type: "POST",
@@ -523,7 +577,6 @@ $( ".check" ).on( "click", function(){
                    'csrfmiddlewaretoken':"{% csrf_token %}"
                 },
                 success:function(data){
-                   console.log(data);
                    $("#group_name").val('');             
                    if(data == 'error'){
                       $.jGrowl('a group exists with that name', {
@@ -535,15 +588,18 @@ $( ".check" ).on( "click", function(){
                         header: 'Well done!',
                         theme: 'bg-success'
                       });
-                      next_tab();
+                      //**@ inactive profile active permissions
+                      next_tab('profile', 'permissions');
+                      $('.current_group').text('First choose permissions for '+ group_name);
+                      localStorage.setItem('group_id', data.id);
+                      localStorage.setItem('group_name', data.name);
+                      console.log('group name is :'+data.name + ' and id is '+ data.id)
                    }        
-                  
-                  localStorage.setItem('user_id', data);
-                  // $('.user_id').val(localStorage.getItem("user_id"));
+
                 },
-                error:function(error){
-                  console.log(error);
-                  $.jGrowl(error, {
+                error:function(error, data){
+                  console.log(error, data);
+                  $.jGrowl(error, data, {
                       header: 'Oh snap!',
                       theme: 'bg-danger'
                   });
@@ -554,41 +610,69 @@ $( ".check" ).on( "click", function(){
     }
   });
 
-  /* permission button */
+/*--- create group ---*/
+//**@ check group id in storage 
+if(localStorage.getItem("group_id")){
+  $('.current_group').text('First choose permissions for '+ localStorage.getItem("group_name"));
+}else{
+  $('.current_group').text('');
+}
+/*-------  permission button --------*/
 $("#permission-btn").click(function(event){
     event.preventDefault();
     var checkBoxesStringArray = $(".check:checked").map(function(){
       return $(this).val();
     }).get();
     var checkBoxesStringNumber = checkBoxesStringArray.map(Number);
-    /* check can login status */
+    //**@ check login status
     if($("#can-login").is(':checked')){
       $("#can-login").val('active')
     }else{
       $("#can-login").val('inactive');
     }
+    //**@ check login val
     var can_login_value = $("#can-login").val();
-
+    //**@ span val
+    var set_current_group_text = $('.current_group').text('');
+    //**@ set group_id
+     var g_id =   localStorage.getItem("group_id") ? localStorage.getItem('group_id') : $('.group_select_permissions').val();
+    //**@ call
     $.ajax({
-      url: "{% url 'dashboard:user_assign_permission' %}",
+      url: "{% url 'dashboard:group_assign_permission' %}",
       type: 'POST',
       data: {
              'checklist[]': checkBoxesStringArray,
-             'user_id': localStorage.getItem('user_id'),
+             'group_id': g_id ,
              'check_login':can_login_value,
              'csrfmiddlewaretoken':"{% csrf_token %}"
       },
       success: function(data){
-         $.jGrowl('permissions added successfully', {
-              header: 'Well done!',
-              theme: 'bg-success'
-         });
-         window.location = "{% url 'dashboard:users' %}";
-         localStorage.removeItem('user_id');
+         $('.current_group').text('');
+         if(localStorage.getItem("group_id")){
+             $.jGrowl('permissions added successfully', {
+                  header: 'Well done!',
+                  theme: 'bg-success'
+             });
+         }else{
+              $.jGrowl('permissions updated successfully', {
+                  header: 'Well done!',
+                  theme: 'bg-success'
+              });
+         }
+
+         // window.location = "{% url 'dashboard:users' %}";
+         localStorage.removeItem('group_id');
+         localStorage.removeItem('group_name');
       }
-      ,error:function(){}
+      ,error:function(){
+        $.jGrowl('something went wrong', {
+              header: 'Oops!',
+              theme: 'bg-danger'
+         });
+      }
      });
 
 });
+/*-------  end permission button --------*/
 </script>
 {% endblock %}

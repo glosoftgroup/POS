@@ -9,6 +9,8 @@ urlpatterns = [
         url(r'^$', views.perms, name='perms'),
         url(r'^add_group/$', views.create_group, name='add_group'),
         url(r'^group_assign_permission/$', views.group_assign_permission, name='group_assign_permission'),
+        url(r'^get_group_users/$', views.get_group_users, name='get_group_users'),
+        url(r'^group_edit/$', views.group_edit, name='group_edit'),
 ]
 
 if settings.DEBUG:

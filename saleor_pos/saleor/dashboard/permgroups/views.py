@@ -8,37 +8,22 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.utils.http import is_safe_url
 from django.utils.translation import pgettext_lazy
 from django.views.decorators.http import require_http_methods
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from passlib.hash import pbkdf2_sha256
+from django.template.loader import render_to_string
 
 from ...core.utils import get_paginator_items
 from ..views import staff_member_required
 from ...userprofile.models import User
 
-#    : code to import groups and permissions
-#    -------------------------------------
-# from django.contrib.auth.models import Group, Permission
-# from django.contrib.contenttypes.models import ContentType
-# from api.models import Project
-#--- execution
-# new_group, created = Group.objects.get_or_create(name='new_group')
-# # Code to add permission to group ???
-# ct = ContentType.objects.get_for_model(Project)
-
-# # Now what - Say I want to add 'Can add project' permission to new_group?
-# permission = Permission.objects.create(codename='can_add_project',
-#                                    name='Can add project',
-#                                    content_type=ct)
-# new_group.permissions.add(permission)
-
-
 def perms(request):
     users = User.objects.all().order_by('id')
     permissions = Permission.objects.all()
     groups = Group.objects.all()
+    first_group = Group.objects.filter()[:1].get()
+    users_in_group = User.objects.filter(groups__id=first_group.id)
     return TemplateResponse(request, 'dashboard/permissions/list.html', 
-        {'users':users, 'permissions':permissions, 'groups':groups})
+        {'users':users, 'permissions':permissions, 'groups':groups, 'users_in_group':users_in_group})
 
 @csrf_exempt
 def create_group(request):
@@ -52,38 +37,54 @@ def create_group(request):
         group = Group.objects.create(name=group_name)
         group.user_set.add(*users)
         group.save()
-        last_id = Group.objects.latest('id')
-        return HttpResponse(last_id)
+        last_id_group = Group.objects.latest('id')
+        return JsonResponse({"id":last_id_group.id, "name":last_id_group.name})
 
 @csrf_exempt
 def group_assign_permission(request):
     if request.method == 'POST':
-        group_id = request.POST.get('user_id')
+        group_id = request.POST.get('group_id')
         group = Group.objects.get(id=group_id)
         group_has_permissions = group.permissions.all()
         login_status = request.POST.get('check_login')
         permission_list = request.POST.getlist('checklist[]')
         users_in_group = User.objects.filter(groups__name=group.name)
         if login_status == 'inactive':   
-            users_loop(False)
+            users_loop(False, users_in_group)
             return HttpResponse('deactivated')
         else:
             if group_has_permissions in permission_list:
                 not_in_group_permissions = list(set(permission_list) - set(group_has_permissions))
                 group.permissions.add(*not_in_group_permissions)
                 group.save()
-                users_loop(True)
+                users_loop(True, users_in_group)
                 return HttpResponse('permissions added')
             else:
                 not_in_group_permissions = list(set(permission_list) - set(group_has_permissions))
                 group.permissions.remove(*group_has_permissions)
                 group.permissions.add(*not_in_group_permissions)
                 group.save()
-                users_loop(True)
+                users_loop(True, users_in_group)
                 return HttpResponse('permissions updated')
 
-def users_loop(status):
-    for user in users_in_group:
+def users_loop(status, users):
+    for user in users:
         user.is_staff = status
         user.is_active = status
         user.save()
+
+def get_group_users(request):
+    if request.is_ajax() and request.method == 'POST': 
+        group_id = request.POST.get('id')
+        users = User.objects.filter(groups__id=group_id)
+        html = render_to_string('dashboard/permissions/group_users.html', {'users':users})
+        return HttpResponse(html)
+
+def group_edit(request):
+    group_id = request.POST.get('id')
+    group = Group.objects.get(id=group_id)
+    permissions = Permission.objects.all()
+    group_permissions = Permission.objects.filter(group=group)
+    ctx = {'group': group,'permissions':permissions, 'group_permissions':group_permissions}
+    html = render_to_string('dashboard/permissions/group_permissions.html', ctx)
+    return HttpResponse(html)
