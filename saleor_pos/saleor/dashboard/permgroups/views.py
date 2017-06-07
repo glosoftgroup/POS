@@ -11,7 +11,8 @@ from django.views.decorators.http import require_http_methods
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.template.loader import render_to_string
-
+import json
+import simplejson
 from ...core.utils import get_paginator_items
 from ..views import staff_member_required
 from ...userprofile.models import User
@@ -128,3 +129,46 @@ def group_delete(request, pk):
         return HttpResponse('success')
     else:
         return HttpResponse('error deleting')
+
+def group_manage(request):
+    group_id = request.POST.get('id')
+    group = Group.objects.get(id=group_id)
+    permissions = Permission.objects.all()
+    group_permissions = Permission.objects.filter(group=group)
+    users_in_group = User.objects.filter(groups__name=group.name)
+    ctx = {'group': group,'permissions':permissions, 'group_permissions':group_permissions,'users':users_in_group}
+    html = render_to_string('dashboard/permissions/edit_group_permissions.html', ctx)
+    return HttpResponse(html)
+
+# def get_group_users(request):
+#     group_id = request.POST.get('id')
+#     group = Group.objects.get(id=group_id)
+#     users = User.objects.filter(groups__name=group.name)
+#     # json_data = json.dumps(list(users))
+#     # return JsonResponse({"users":list(users)})
+#     return HttpResponse(list(users))
+def get_group_users(request):
+    group_id = request.POST.get('id')
+    group = Group.objects.get(id=group_id)
+    users = User.objects.filter(groups__name=group.name)
+     # construct a list which will contain all of the data for the response
+    to_json = []
+    for user in users:
+        # for each object, construct a dictionary containing the data you wish to return
+        user_dict = {}
+        user_dict['id'] = user.id
+        if user.name:
+            user_dict['name'] = user.name
+        else:
+            user_dict['name'] = "user"
+        user_dict['email'] = user.email
+        if user.image:
+            user_dict['image'] = str(user.image)
+        else:
+            user_dict['image'] = "/static/images/user.png"
+        # append the dictionary of each dog to the list
+        to_json.append(user_dict)
+    # convert the list to JSON
+    response_data = simplejson.dumps(to_json)
+    # return an HttpResponse with the JSON and the correct MIME type
+    return HttpResponse(response_data, content_type='application/json')
