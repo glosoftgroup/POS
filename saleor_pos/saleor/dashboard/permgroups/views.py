@@ -20,10 +20,14 @@ def perms(request):
     users = User.objects.all().order_by('id')
     permissions = Permission.objects.all()
     groups = Group.objects.all()
-    first_group = Group.objects.filter()[:1].get()
-    users_in_group = User.objects.filter(groups__id=first_group.id)
-    return TemplateResponse(request, 'dashboard/permissions/list.html', 
+    try:
+        first_group = Group.objects.filter()[:1].get()
+        users_in_group = User.objects.filter(groups__id=first_group.id)
+        return TemplateResponse(request, 'dashboard/permissions/list.html', 
         {'users':users, 'permissions':permissions, 'groups':groups, 'users_in_group':users_in_group})
+    except: ObjectDoesNotExist
+    return TemplateResponse(request, 'dashboard/permissions/list.html', 
+        {'users':users, 'permissions':permissions, 'groups':groups})
 
 @csrf_exempt
 def create_group(request):
@@ -57,6 +61,7 @@ def group_assign_permission(request):
                 not_in_group_permissions = list(set(permission_list) - set(group_has_permissions))
                 group.permissions.add(*not_in_group_permissions)
                 group.save()
+                refine_users_permissions(users_in_group, permission_list)
                 users_loop(True, users_in_group)
                 return HttpResponse('permissions added')
             else:
@@ -64,8 +69,29 @@ def group_assign_permission(request):
                 group.permissions.remove(*group_has_permissions)
                 group.permissions.add(*not_in_group_permissions)
                 group.save()
+                for user in users_in_group:
+                    user.user_permissions.remove(*group_has_permissions)
+                    user.user_permissions.add(*not_in_group_permissions)
+                    user.save()
                 users_loop(True, users_in_group)
                 return HttpResponse('permissions updated')
+
+def refine_users_permissions(users_in_group, permission_list):
+    for user in users_in_group:
+        user_has_permissions = Permission.objects.filter(user=user)
+        if user_has_permissions in permission_list:
+            not_in_user_permissions = list(set(permission_list) - set(user_has_permissions))
+            user.is_staff = True
+            user.is_active = True
+            user.user_permissions.add(*not_in_user_permissions)
+            user.save()
+        else:
+            not_in_user_permissions = list(set(permission_list) - set(user_has_permissions))
+            user.is_staff = True
+            user.is_active = True
+            user.user_permissions.remove(*user_has_permissions)
+            user.user_permissions.add(*not_in_user_permissions)
+            user.save()
 
 def users_loop(status, users):
     for user in users:
@@ -88,3 +114,17 @@ def group_edit(request):
     ctx = {'group': group,'permissions':permissions, 'group_permissions':group_permissions}
     html = render_to_string('dashboard/permissions/group_permissions.html', ctx)
     return HttpResponse(html)
+
+def group_delete(request, pk):
+    group = Group.objects.get(id=pk)
+    group_permissions = Permission.objects.filter(group=group)
+    users_in_group = User.objects.filter(groups__name=group.name)
+    if request.method == 'POST':
+        group.permissions.remove(*group_permissions)
+        for user in users_in_group:
+            group.user_set.remove(user)
+            user.user_permissions.remove(*group_permissions)
+        group.delete()
+        return HttpResponse('success')
+    else:
+        return HttpResponse('error deleting')

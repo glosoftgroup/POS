@@ -81,7 +81,8 @@ def user_process(request):
 def user_detail(request, pk):
 	user = get_object_or_404(User, pk=pk)
 	permissions = Permission.objects.filter(user=user)
-	return TemplateResponse(request, 'dashboard/users/detail.html', {'user':user,'permissions':permissions})
+	groups = user.groups.all()
+	return TemplateResponse(request, 'dashboard/users/detail.html', {'user':user,'permissions':permissions,'groups':groups})
 
 def user_delete(request, pk):
 	user = get_object_or_404(User, pk=pk)

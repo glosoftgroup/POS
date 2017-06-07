@@ -43,6 +43,14 @@
 		       </div>
 		     </div> 
          <div class="col-md-6 col0xs-12">
+          {% if groups %}
+            <h2>Groups</h2>
+            {% for group in groups %}
+            <li>{{ group.name }}</li>
+            {% endfor %}
+          {% else %}
+              <li>No groups assigned</li>
+          {% endif %}
          <h2> Permissions 
             <a href="{% url 'dashboard:user-edit' pk=user.pk %}" class="btn btn-default btn-sm"><i class="icon-pencil7" style="font-size: 11px;"></i> edit</a>
          </h2>
@@ -56,12 +64,6 @@
          </div> 
    </div>
   </div>   
-<!--     <div class="col-md-6 col-xs-12 right">            
-      <p> Name : {{user.name }} </p>
-      <p> Email: {{user.email }}</p>
-      <p> National ID No: {{user.nid }}</p>
-      <p> Mobile No: {{user.mobile }}</p>            
-    </div>  --> 
   </div>
 </div>
 {% endblock %}

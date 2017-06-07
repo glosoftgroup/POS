@@ -11,6 +11,7 @@ urlpatterns = [
         url(r'^group_assign_permission/$', views.group_assign_permission, name='group_assign_permission'),
         url(r'^get_group_users/$', views.get_group_users, name='get_group_users'),
         url(r'^group_edit/$', views.group_edit, name='group_edit'),
+        url(r'^delete/(?P<pk>[0-9]+)/$', views.group_delete, name='group-delete'),
 ]
 
 if settings.DEBUG:
