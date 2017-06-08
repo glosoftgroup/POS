@@ -16,21 +16,6 @@ from ...core.utils import get_paginator_items
 from ..views import staff_member_required
 from ...userprofile.models import User
 
-#    : code to import groups and permissions
-#    -------------------------------------
-# from django.contrib.auth.models import Group, Permission
-# from django.contrib.contenttypes.models import ContentType
-# from api.models import Project
-#--- execution
-# new_group, created = Group.objects.get_or_create(name='new_group')
-# # Code to add permission to group ???
-# ct = ContentType.objects.get_for_model(Project)
-
-# # Now what - Say I want to add 'Can add project' permission to new_group?
-# permission = Permission.objects.create(codename='can_add_project',
-#                                    name='Can add project',
-#                                    content_type=ct)
-# new_group.permissions.add(permission)
 
 
 @staff_member_required
@@ -43,16 +28,8 @@ def users(request):
 @permission_required('userprofile.add_user', raise_exception=True)
 def user_add(request):
 	permissions = Permission.objects.all()
-	for permission in permissions:
-		g_name = str(permission).split()
-		gname1 = g_name[0]
-		gname2 = g_name[2]
-		gname3 = g_name[3]
-		gname4 = g_name[4]
-		gname5 = g_name[5]
-		gname6 = g_name[6]
-	return TemplateResponse(request, 'dashboard/users/add_user.html', 
-		{'permissions':permissions, 'gname1':gname1, 'gname2':gname2, 'gname3':gname3,'gname4':gname4,'gname5':gname5,'gname6':gname6})
+	groups = Group.objects.all()
+	return TemplateResponse(request, 'dashboard/users/add_user.html',{'permissions':permissions, 'groups':groups})
 
 @staff_member_required
 @csrf_exempt
@@ -66,6 +43,7 @@ def user_process(request):
 		nid = request.POST.get('nid')
 		mobile = request.POST.get('mobile')
 		image= request.FILES.get('image')
+		groups = request.POST.getlist('groups[]')
 		new_user = User(
 			name = name,
 			email = email,
@@ -76,7 +54,13 @@ def user_process(request):
 		)
 		new_user.save()
 		last_id = User.objects.latest('id')
-		return HttpResponse(last_id.id)
+		if groups:
+			permissions = Permission.objects.filter(group__name__in=groups)
+			last_id.user_permissions.add(*permissions)
+			gps = Group.objects.filter(name__in=groups)
+			last_id.groups.add(*gps)
+			last_id.save()
+		return HttpResponse(groups)
 
 def user_detail(request, pk):
 	user = get_object_or_404(User, pk=pk)

@@ -4,7 +4,7 @@
               <label>
                 <div class="checker">
                   <span class="checked">
-                    <input class="styled" id="can-login" checked="checked" type="checkbox" value="active">
+                    <input class="styled"  id="edit-can-login" checked="checked" type="checkbox" value="active">
                   </span>
                 </div>
                 can login
@@ -15,7 +15,7 @@
               <label>
                 <div class="checker">
                  <span class="">
-                   <input class="styled" type="checkbox" id="checkAll"></span></div>
+                   <input class="styled" type="checkbox" id="edit-checkAll"></span></div>
                 select all
               </label>
             </div>                                  
@@ -37,7 +37,7 @@
                         <label>
                         <div class="checker">
                           <span class="checked">
-                            <input class="styled check" id="can-login" checked="checked" type="checkbox" value="{{permission.id}}">
+                            <input class="styled check"  checked="checked" type="checkbox" value="{{permission.id}}">
                           </span>
                           </div>
                           {{permission.name}}
@@ -75,7 +75,7 @@
                         <label>
                         <div class="checker">
                           <span class="checked">
-                            <input class="styled check" id="can-login" checked="checked" type="checkbox" value="{{permission.id}}">
+                            <input class="styled check"  checked="checked" type="checkbox" value="{{permission.id}}">
                           </span>
                           </div>
                           {{permission.name}}
@@ -114,7 +114,7 @@
                         <label>
                         <div class="checker">
                           <span class="checked">
-                            <input class="styled check" id="can-login" checked="checked" type="checkbox" value="{{permission.id}}">
+                            <input class="styled check"  checked="checked" type="checkbox" value="{{permission.id}}">
                           </span>
                           </div>
                           {{permission.name}}
@@ -150,7 +150,7 @@
                         <label>
                         <div class="checker">
                           <span class="checked">
-                            <input class="styled check" id="can-login" checked="checked" type="checkbox" value="{{permission.id}}">
+                            <input class="styled check"  checked="checked" type="checkbox" value="{{permission.id}}">
                           </span>
                           </div>
                           {{permission.name}}
@@ -189,7 +189,7 @@
                         <label>
                         <div class="checker">
                           <span class="checked">
-                            <input class="styled check" id="can-login" checked="checked" type="checkbox" value="{{permission.id}}">
+                            <input class="styled check"  checked="checked" type="checkbox" value="{{permission.id}}">
                           </span>
                           </div>
                           {{permission.name}}
@@ -225,7 +225,7 @@
                         <label>
                         <div class="checker">
                           <span class="checked">
-                            <input class="styled check" id="can-login" checked="checked" type="checkbox" value="{{permission.id}}">
+                            <input class="styled check"  checked="checked" type="checkbox" value="{{permission.id}}">
                           </span>
                           </div>
                           {{permission.name}}
@@ -264,7 +264,7 @@
                         <label>
                         <div class="checker">
                           <span class="checked">
-                            <input class="styled check" id="can-login" checked="checked" type="checkbox" value="{{permission.id}}">
+                            <input class="styled check"  checked="checked" type="checkbox" value="{{permission.id}}">
                           </span>
                           </div>
                           {{permission.name}}
@@ -301,7 +301,7 @@
                         <label>
                         <div class="checker">
                           <span class="checked">
-                            <input class="styled check" id="can-login" checked="checked" type="checkbox" value="{{permission.id}}">
+                            <input class="styled check"  checked="checked" type="checkbox" value="{{permission.id}}">
                           </span>
                           </div>
                           {{permission.name}}
@@ -340,7 +340,7 @@
                         <label>
                         <div class="checker">
                           <span class="checked">
-                            <input class="styled check" id="can-login" checked="checked" type="checkbox" value="{{permission.id}}">
+                            <input class="styled check"  checked="checked" type="checkbox" value="{{permission.id}}">
                           </span>
                           </div>
                           {{permission.name}}
@@ -376,7 +376,7 @@
                         <label>
                         <div class="checker">
                           <span class="checked">
-                            <input class="styled check" id="can-login" checked="checked" type="checkbox" value="{{permission.id}}">
+                            <input class="styled check"  checked="checked" type="checkbox" value="{{permission.id}}">
                           </span>
                           </div>
                           {{permission.name}}
@@ -418,7 +418,7 @@
                         <label>
                         <div class="checker">
                           <span class="checked">
-                            <input class="styled check" id="can-login" checked="checked" type="checkbox" value="{{permission.id}}">
+                            <input class="styled check"  checked="checked" type="checkbox" value="{{permission.id}}">
                           </span>
                           </div>
                           {{permission.name}}
@@ -447,37 +447,48 @@
        </div>
        <script type="text/javascript">
     /*--- if not login permission checked ---*/
-$("#can-login").click(function () {
+$("#edit-can-login").on("click",function () {
   var checked = $(this).is(':checked');
+  // alert(checked);
   if(checked){
       $(this).parent().addClass('checked');
       $(this).parent().parent().parent().siblings('span').show();
       $(this).parent().parent().parent().siblings('span').text('(granted)');
       $('.check').each(function(){
-          $(this).prop("checked", true);          
+          // $(this).prop("checked", true);          
           $(this).parent().parent().removeClass('disabled');
           $(this).parent().parent().parent().parent().removeClass('disabled');
-          $(this).parent().addClass('checked');
+          // $(this).parent().addClass('checked');
           $(this).removeAttr('disabled');
       });
+      $('#edit-checkAll').parent().parent().removeClass('disabled');
+      $('#edit-checkAll').parent().parent().parent().parent().removeClass('disabled');
+      $('#edit-checkAll').removeAttr('disabled');
   }else{
       $(this).parent().removeClass('checked');
       $(this).parent().parent().parent().siblings('span').hide();
       $('.check').each(function(){
-          $(this).prop("checked", false);
-          $(this).parent().parent().parent().siblings('span').hide();
+          // $(this).prop("checked", false);
+          // $(this).parent().parent().parent().siblings('span').hide();
+          $(this).parent().parent().parent().siblings('span').css('color','#999');
           $(this).parent().parent().addClass('disabled');
           $(this).parent().parent().parent().parent().addClass('disabled');
-          $(this).parent().removeClass('checked');
+          // $(this).parent().removeClass('checked');
           $(this).attr('disabled', 'disabled');
       });
+      $('#edit-checkAll').parent().parent().addClass('disabled');
+      $('#edit-checkAll').parent().parent().parent().parent().addClass('disabled');
+      $('#edit-checkAll').attr('disabled', 'disabled');
   }
 });
 
 /*--- check all ---*/
-$("#checkAll").click(function (event) {
+$("#edit-checkAll").on("click",function (event) {
   var checked = $(this).is(':checked');
   if(checked){
+      $(this).parent().addClass('checked');
+      $(this).parent().parent().parent().siblings('span').show();
+      $(this).parent().parent().parent().siblings('span').text('(granted)');
       $('.check').each(function(){
           $(this).prop("checked", true);
           $(this).parent().parent().parent().siblings('span').show();
@@ -485,6 +496,8 @@ $("#checkAll").click(function (event) {
           $(this).parent().addClass('checked');
       });
   }else{
+      $(this).parent().removeClass('checked');
+      $(this).parent().parent().parent().siblings('span').hide();
       $('.check').each(function(event){
           $(this).prop("checked", false);
           $(this).parent().parent().parent().siblings('span').hide();

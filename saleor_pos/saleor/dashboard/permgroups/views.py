@@ -100,7 +100,7 @@ def users_loop(status, users):
         user.is_active = status
         user.save()
 
-def get_group_users(request):
+def get_search_users(request):
     if request.is_ajax() and request.method == 'POST': 
         group_id = request.POST.get('id')
         users = User.objects.filter(groups__id=group_id)
@@ -124,6 +124,8 @@ def group_delete(request, pk):
         group.permissions.remove(*group_permissions)
         for user in users_in_group:
             group.user_set.remove(user)
+            # user_groups = user.groups.all()
+            # all_permissions = [group.permissions.all() for group in user_groups]
             user.user_permissions.remove(*group_permissions)
         group.delete()
         return HttpResponse('success')
@@ -140,13 +142,6 @@ def group_manage(request):
     html = render_to_string('dashboard/permissions/edit_group_permissions.html', ctx)
     return HttpResponse(html)
 
-# def get_group_users(request):
-#     group_id = request.POST.get('id')
-#     group = Group.objects.get(id=group_id)
-#     users = User.objects.filter(groups__name=group.name)
-#     # json_data = json.dumps(list(users))
-#     # return JsonResponse({"users":list(users)})
-#     return HttpResponse(list(users))
 def get_group_users(request):
     group_id = request.POST.get('id')
     group = Group.objects.get(id=group_id)
@@ -160,8 +155,7 @@ def get_group_users(request):
         if user.name:
             user_dict['name'] = user.name
         else:
-            user_dict['name'] = "user"
-        user_dict['email'] = user.email
+            user_dict['name'] = user.email
         if user.image:
             user_dict['image'] = str(user.image)
         else:
@@ -172,3 +166,53 @@ def get_group_users(request):
     response_data = simplejson.dumps(to_json)
     # return an HttpResponse with the JSON and the correct MIME type
     return HttpResponse(response_data, content_type='application/json')
+
+
+def group_update(request):
+    if request.method == 'POST':
+        group_id = request.POST.get('id')
+        group_name = request.POST.get('group_name')
+        group = Group.objects.get(id=group_id)
+        group_has_permissions = group.permissions.all()
+        login_status = request.POST.get('check_login')
+        permission_list = request.POST.getlist('checklist[]')
+        users = request.POST.getlist('users[]')
+        group_has_users = User.objects.filter(groups__name=group.name)
+        group.name = group_name
+        if login_status == 'inactive':   
+            users_loop(False, group_has_users)
+            return HttpResponse(' group inactive')
+        else:
+            users_loop(True, group_has_users)
+            if group_has_permissions in permission_list:
+                not_in_group_permissions = list(set(permission_list) - set(group_has_permissions))
+                group.permissions.add(*not_in_group_permissions)
+                group.save()
+                user_manage(users, group_has_users, group)
+                #** refine update users permissions
+                refine_users_permissions(group_users_set_2, permission_list)
+                return HttpResponse('permissions added')
+            else:
+                not_in_group_permissions = list(set(permission_list) - set(group_has_permissions))
+                group.permissions.remove(*group_has_permissions)
+                group.permissions.add(*not_in_group_permissions)
+                group.save()
+                user_manage(users, group_has_users, group)
+                users2 = User.objects.filter(groups__name=group.name)
+                for user in users2:
+                    user.user_permissions.remove(*group_has_permissions)
+                    user.user_permissions.add(*not_in_group_permissions)
+                    user.save()
+                return HttpResponse('permissions updated')
+
+#** filter and save users in order
+def user_manage(users, group_has_users, group):
+    if group_has_users in users:
+        not_in_group_users = list(set(users) - set(group_has_users))
+        group.user_set.add(*not_in_group_users)
+        group.save()
+    else:
+        not_in_group_users = list(set(users) - set(group_has_users))
+        group.user_set.remove(*group_has_users)
+        group.user_set.add(*not_in_group_users)
+        group.save()

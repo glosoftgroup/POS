@@ -485,6 +485,7 @@
            <div class="row">
            <div class="col-md-12">
              <h5>Group & Users</h5>
+             <input type="hidden" name="group-id" id="group-id">
            </div>
             <div class="col-md-12">
              <div class="form-group">
@@ -535,23 +536,7 @@
                   </tr>
                 </thead>
                 <tbody class="table_body">
-                  <tr>
-                   <td>
-                     <img src="{% static 'images/user.png' %}" alt="" class="circle teal" style="width: 40px;height: 40px;">
-                   </td>
-                  <td>
-                    alex
-                  </td>
-                    <td>
-                      <!-- <ul class="icons-list">
-                        <li> -->
-                          <a href="javascript:;" class="modal-trigger btn btn-default btn-sm del_array_item"><i class="icon-trash" style="font-size: 11px;" data-toggle="modal"></i> remove
-                         </a>
-                        <!-- </li>
-                      </ul> -->
-                    </td>
-                  </td>
-                  </tr>
+
                 </tbody>
               </table>
               </div>
@@ -573,7 +558,7 @@
         </div>
        </div>    
        <div class="modal-footer">
-         <button type="submit" id='modal_delete' class="btn pull-right bg-danger del" onclick="return false" data-id="" data-href="">Update</button>         
+         <button type="submit" id='modal_delete' class="btn pull-right bg-danger update" onclick="submitGroupDetails()" data-id="" data-href="">Update</button>         
          <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>          
        </div>
      </div>
@@ -616,6 +601,7 @@
 {% block custom_js %}
 <script type="text/javascript">
 
+
 function remove_duplicates(objectsArray) {
     var usedObjects = {};
     for (var i=objectsArray.length - 1;i>=0;i--) {
@@ -636,11 +622,11 @@ function remove_duplicate_name(list) {
   });
   return result;
 }
-//**@ users array
-// var names = [];
+//**@ global users array
+ var names = [];
 //**@ group users on load
 $('document').ready(function () {
- names = [];
+
   //**@ edit modal
 $('.modal_trigger_edit').on('click', function (e) {
      var url = $(this).data('href')
@@ -648,6 +634,7 @@ $('.modal_trigger_edit').on('click', function (e) {
      var username = $(this).data('name');
      var modal = $(this).data('ta');
      var id = $(this).data('id');
+     $('#group-id').val(id);
      var user_url = $(this).data('users');
      $('#g_name').val(username);
      $('.del').attr('data-id', id);
@@ -663,33 +650,24 @@ $('.modal_trigger_edit').on('click', function (e) {
       });
 
       //*@ get group users
-      $.post(user_url,{id:id, csrfmiddlewaretoken:"{{ csrf_token }}"}, function(data){
-           // console.log(data);
-
-           names = data;
-           console.log(names);
-          $.each(data,function(idx, obj){ 
-            console.log('id:'+ obj.id, + ' jina: '+ obj.name + ' email: '+obj.email+ ' image: '+obj.image)
-              // $.each(obj, function(key, value){
-                  // console.log(key + ": " + value);
-                  // console.log('id:'+ value.id, + 'name:'+ value.name);
-              // });
-          });
-
-          /*$.each(data,function(idx, obj){ 
-            console.log('id:'+ obj.id, + ' jina: '+ obj.name + ' email: '+obj.email+ ' image: '+obj.image)
-              $.each(obj, function(key, value){
-                  console.log(key + ": " + value);
-                  console.log('id:'+ value.id, + 'name:'+ value.name);
-              });
-          });*/
+      $.ajax({
+        type:"POST",
+        url:user_url,
+        data:{id:id, csrfmiddlewaretoken:"{{ csrf_token }}"},
+        async:false,
+        success:function(data){
+          names = data;
+          console.log(names);
+        },error:function(error){
+          console.log(error);
+        }
       });
+    //*@ populate table
     var table_body = $('#group_user_table tbody');
     var parent = table_body.parent();
     
     table_body.detach().empty().each(function(i, val){
         for (var x = 0; x < remove_duplicates(names).length; x++){
-            // $(this).append('<li>' + remove_duplicates(names)[x].id + '</li>');
             $(this).append('<tr id="'+ remove_duplicates(names)[x].id +'"><td><img src="'+ remove_duplicates(names)[x].image +'" class="circle teal img-circle" style="width: 40px;height: 40px;">'+ '</td><td>'+ remove_duplicates(names)[x].name + '</td><td><a href="javascript:;" onClick="removeuser('+ remove_duplicates(names)[x].id +')" class="modal-trigger btn btn-default btn-sm del_array_item"><i class="icon-trash" style="font-size: 11px;" data-toggle="modal"></i> remove</a></td></tr');
             if (x == remove_duplicates(names).length - 1){
                 $(this).appendTo(parent);
@@ -698,32 +676,28 @@ $('.modal_trigger_edit').on('click', function (e) {
     });
 
 });
-
-
 
 });
 //**@ users select
 $('#add_user_btn').on('click', function(e){
    var selected = $("#edit_multiple :selected").map(function() {
                       return {
-                          id: $(this).val(),
+                          id: parseInt($(this).val()),
                           name: $(this).data("name"),
                           image: $(this).data("image")
                       };
-                      // return $(this).data("name");
                   }).get();
-   // console.log(selected);
-   $.each(selected, function(i, val){
-     names.push(val);
-   });
-    // console.log(remove_duplicate_name(names));
-    console.log(remove_duplicates( names ));
+    $.each(selected, function(i, val){
+      // var index = selected.findIndex(x=>x.name==val.name);
+      names.indexOf(val) === -1 ? names.push(val): console.log('already exists');
+      // index === -1 ? names.push(val): console.log('already exists');
+    });
+
     var table_body = $('#group_user_table tbody');
     var parent = table_body.parent();
     
     table_body.detach().empty().each(function(i, val){
         for (var x = 0; x < remove_duplicates(names).length; x++){
-            // $(this).append('<li>' + remove_duplicates(names)[x].id + '</li>');
             $(this).append('<tr id="'+ remove_duplicates(names)[x].id +'"><td><img src="'+ remove_duplicates(names)[x].image +'" class="circle teal img-circle" style="width: 40px;height: 40px;">'+ '</td><td>'+ remove_duplicates(names)[x].name + '</td><td><a href="javascript:;" onClick="removeuser('+ remove_duplicates(names)[x].id +')" class="modal-trigger btn btn-default btn-sm del_array_item"><i class="icon-trash" style="font-size: 11px;" data-toggle="modal"></i> remove</a></td></tr');
             if (x == remove_duplicates(names).length - 1){
                 $(this).appendTo(parent);
@@ -732,6 +706,7 @@ $('#add_user_btn').on('click', function(e){
     });
 
 });
+//**@ remove user from array
 function removeuser(user){
    users = remove_duplicates(names);
    var index = names.indexOf(user);
@@ -739,27 +714,62 @@ function removeuser(user){
     names.splice(index,1);
     console.log(names);
 }
-//**@ remove item from array
+//**@ submit group details
+function submitGroupDetails(){
+   var user_ids = [];
+   //**@ get list of users ids
+       $.each(names, function(i, val){
+          user_ids.push(val.id);
+       });
 
-// //**@ edit modal
-// $('.modal_trigger_edit').on('click', function (e) {
-//      var url = $(this).data('href')
-//      var prompt_text = $(this).data('title');
-//      var username = $(this).data('name');
-//      var modal = $(this).data('ta');
-//      var id = $(this).data('id');
-//      $('#g_name').val(username);
-//      $('.del').attr('data-id', id);
-//      $('.del').attr('data-href', url);
-//      $('.modal-title').html(prompt_text +'id: '+id);
-//      $(modal).modal();
-//      $('.delete_form').attr('action',url);
-//      var token = '{{ csrf_token }}';
-     
-//      $.post(url,{id:id, csrfmiddlewaretoken:"{{ csrf_token }}"}, function(data){
-//         $('.permissions_display').html(data);
-//      });
-// });
+   //**@ get list of all checked permissions
+   var checkBoxesStringArray = $(".check:checked").map(function(){
+      return $(this).val();
+    }).get();
+   var checkBoxesStringNumber = checkBoxesStringArray.map(Number);
+   console.log(checkBoxesStringNumber);
+       //**@ check login status
+    if($("#edit-can-login").is(':checked')){
+      $("#edit-can-login").val('active')
+    }else{
+      $("#edit-can-login").val('inactive');
+    }
+    //**@ check login val
+    var can_login_value = $("#edit-can-login").val();
+    //**@ id
+    var g_id = $('#group-id').val();
+    var g_name = $('#g_name').val();
+    console.log('id: '+g_id);
+
+    //**@ post
+    $.ajax({
+      url: "{% url 'dashboard:group_update' %}",
+      type: 'POST',
+      data: {
+             'checklist[]': checkBoxesStringArray,
+             'users[]': user_ids,
+             'id': g_id ,
+             'group_name': g_name,
+             'check_login':can_login_value,
+             'csrfmiddlewaretoken':"{{ csrf_token }}"
+      },
+      async:false,
+      success: function(data){
+              $.jGrowl('group updated successfully', {
+                  header: 'Well done!',
+                  theme: 'bg-success'
+              });
+          window.location.reload();
+          user_ids=[];
+      }
+      ,error:function(){
+        $.jGrowl('something went wrong', {
+              header: 'Oops!',
+              theme: 'bg-danger'
+         });
+      }
+    });
+}
 //**@ delete modal
 $('.modal_trigger_delete').on('click', function (e) {
      var url = $(this).data('href')
@@ -838,7 +848,7 @@ var $loading = $('.loader').hide();
 $( ".group_select_users" ).change(function() {
     var g_u_id = $(this).val();
     $.ajax({
-        url: "{% url 'dashboard:get_group_users' %}",
+        url: "{% url 'dashboard:get_search_users' %}",
         type: "POST",
         data: {
            'id': g_u_id,
@@ -1035,7 +1045,7 @@ $("#permission-btn").click(function(event){
              'checklist[]': checkBoxesStringArray,
              'group_id': g_id ,
              'check_login':can_login_value,
-             'csrfmiddlewaretoken':"{% csrf_token %}"
+             'csrfmiddlewaretoken':"{{ csrf_token }}"
       },
       success: function(data){
          $('.current_group').text('');

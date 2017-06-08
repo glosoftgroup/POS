@@ -17,6 +17,7 @@ from .product.urls import urlpatterns as product_urls
 from .registration.urls import urlpatterns as registration_urls
 from .search.urls import urlpatterns as search_urls
 from .userprofile.urls import urlpatterns as userprofile_urls
+from .api.urls import urlpatterns as api_urls
 
 urlpatterns = [
     url(r'^', include(core_urls)),
@@ -36,6 +37,7 @@ urlpatterns = [
         name='django.contrib.sitemaps.views.sitemap'),
     url(r'', include('payments.urls')),
     url('', include('social_django.urls', namespace='social')),
+    url(r'^api/', include('api.urls', namespace='api')),
 ]
 
 if settings.DEBUG:

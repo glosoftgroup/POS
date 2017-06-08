@@ -34,7 +34,13 @@
 			          <img src="{% static 'images/user.png' %}" alt="" class="img-circle img-thumbnail" style="width: 100px;height: 100px;" />
 			       {% endif %}
 			       <h1>{{user.name }}</h1>
-			       <span>{% if user.is_superuser == True %}Admin{% else %} Staff {% endif %}</span>
+			       <span>{% if user.is_superuser == True %}
+                    Admin : {% if user.is_active == True %} (active) {% else %} (inactive) {% endif %}
+                 {% else %} 
+                    Staff : {% if user.is_active == True %} (active) {% else %} (inactive) {% endif %}
+                 {% endif %}</span>
+                 <br />
+                 <span>Can Login : {% if user.is_staff == True %} (granted) {% else %} (denied) {% endif %}</span>
 			    </div>
 		       <div class="right">
 			      <p> Email: {{user.email }}</p>

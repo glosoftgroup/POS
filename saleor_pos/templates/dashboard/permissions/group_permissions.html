@@ -8,7 +8,7 @@
               <label>
                 <div class="checker">
                   <span class="checked">
-                    <input class="styled" id="can-login" checked="checked" type="checkbox" value="active">
+                    <input class="styled"  id="can-login" checked="checked" type="checkbox" value="active">
                   </span>
                 </div>
                 can login
@@ -41,7 +41,7 @@
                         <label>
                         <div class="checker">
                           <span class="checked">
-                            <input class="styled check" id="can-login" checked="checked" type="checkbox" value="{{permission.id}}">
+                            <input class="styled check"  checked="checked" type="checkbox" value="{{permission.id}}">
                           </span>
                           </div>
                           {{permission.name}}
@@ -79,7 +79,7 @@
                         <label>
                         <div class="checker">
                           <span class="checked">
-                            <input class="styled check" id="can-login" checked="checked" type="checkbox" value="{{permission.id}}">
+                            <input class="styled check"  checked="checked" type="checkbox" value="{{permission.id}}">
                           </span>
                           </div>
                           {{permission.name}}
@@ -116,7 +116,7 @@
                         <label>
                         <div class="checker">
                           <span class="checked">
-                            <input class="styled check" id="can-login" checked="checked" type="checkbox" value="{{permission.id}}">
+                            <input class="styled check"  checked="checked" type="checkbox" value="{{permission.id}}">
                           </span>
                           </div>
                           {{permission.name}}
@@ -152,7 +152,7 @@
                         <label>
                         <div class="checker">
                           <span class="checked">
-                            <input class="styled check" id="can-login" checked="checked" type="checkbox" value="{{permission.id}}">
+                            <input class="styled check"  checked="checked" type="checkbox" value="{{permission.id}}">
                           </span>
                           </div>
                           {{permission.name}}
@@ -190,7 +190,7 @@
                         <label>
                         <div class="checker">
                           <span class="checked">
-                            <input class="styled check" id="can-login" checked="checked" type="checkbox" value="{{permission.id}}">
+                            <input class="styled check"  checked="checked" type="checkbox" value="{{permission.id}}">
                           </span>
                           </div>
                           {{permission.name}}
@@ -226,7 +226,7 @@
                         <label>
                         <div class="checker">
                           <span class="checked">
-                            <input class="styled check" id="can-login" checked="checked" type="checkbox" value="{{permission.id}}">
+                            <input class="styled check"  checked="checked" type="checkbox" value="{{permission.id}}">
                           </span>
                           </div>
                           {{permission.name}}
@@ -262,7 +262,7 @@
                         <label>
                         <div class="checker">
                           <span class="checked">
-                            <input class="styled check" id="can-login" checked="checked" type="checkbox" value="{{permission.id}}">
+                            <input class="styled check"  checked="checked" type="checkbox" value="{{permission.id}}">
                           </span>
                           </div>
                           {{permission.name}}
@@ -299,7 +299,7 @@
                         <label>
                         <div class="checker">
                           <span class="checked">
-                            <input class="styled check" id="can-login" checked="checked" type="checkbox" value="{{permission.id}}">
+                            <input class="styled check"  checked="checked" type="checkbox" value="{{permission.id}}">
                           </span>
                           </div>
                           {{permission.name}}
@@ -337,7 +337,7 @@
                         <label>
                         <div class="checker">
                           <span class="checked">
-                            <input class="styled check" id="can-login" checked="checked" type="checkbox" value="{{permission.id}}">
+                            <input class="styled check"  checked="checked" type="checkbox" value="{{permission.id}}">
                           </span>
                           </div>
                           {{permission.name}}
@@ -373,7 +373,7 @@
                         <label>
                         <div class="checker">
                           <span class="checked">
-                            <input class="styled check" id="can-login" checked="checked" type="checkbox" value="{{permission.id}}">
+                            <input class="styled check"  checked="checked" type="checkbox" value="{{permission.id}}">
                           </span>
                           </div>
                           {{permission.name}}
@@ -417,7 +417,7 @@
                         <label>
                         <div class="checker">
                           <span class="checked">
-                            <input class="styled check" id="can-login" checked="checked" type="checkbox" value="{{permission.id}}">
+                            <input class="styled check"  checked="checked" type="checkbox" value="{{permission.id}}">
                           </span>
                           </div>
                           {{permission.name}}
@@ -446,7 +446,7 @@
   </div>
   <script type="text/javascript">
     /*--- if not login permission checked ---*/
-$("#can-login").click(function () {
+$("#can-login").on("click",function () {
   var checked = $(this).is(':checked');
   if(checked){
       $(this).parent().addClass('checked');
@@ -474,7 +474,7 @@ $("#can-login").click(function () {
 });
 
 /*--- check all ---*/
-$("#checkAll").click(function (event) {
+$("#checkAll").on("click",function (event) {
   var checked = $(this).is(':checked');
   if(checked){
       $('.check').each(function(){

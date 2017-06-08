@@ -167,6 +167,7 @@ INSTALLED_APPS = [
     'saleor.search',
     'saleor.site',
     'saleor.data_feeds',
+    'saleor.api',
 
     # External apps
     'versatileimagefield',
@@ -184,6 +185,13 @@ INSTALLED_APPS = [
     'social_django',
     'django_countries',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAdminUser',
+    ],
+    'PAGE_SIZE': 10
+}
 
 LOGGING = {
     'version': 1,
