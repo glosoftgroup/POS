@@ -43,4 +43,8 @@ Some situations however call for extra code being written. Whether you need us t
 
 http://mirumee.com
 
+################################
+merging the project adding inventory
+
+
 hello@mirumee.com
